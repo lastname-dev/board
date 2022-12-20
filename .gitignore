@@ -13,8 +13,8 @@ build/
 .settings
 .springBeans
 .sts4-cache
-BoardApplicationTests
-BoardApplecation
+BoardApplicationTests.java
+BoardApplecation.java
 .properties
 bin/
 !**/src/main/**/bin/
