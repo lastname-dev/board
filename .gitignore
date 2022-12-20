@@ -13,8 +13,6 @@ build/
 .settings
 .springBeans
 .sts4-cache
-.properties
-BoardApplication.java
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
