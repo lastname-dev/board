@@ -15,7 +15,7 @@ build/
 .sts4-cache
 BoardApplicationTests.java
 BoardApplecation.java
-.properties
+application.properties
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/

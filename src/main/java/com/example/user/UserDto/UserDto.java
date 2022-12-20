@@ -1,13 +1,12 @@
-package com.example.board.user.UserDto;
+package com.example.user.UserDto;
 
-import com.example.board.user.Gender;
-import com.example.board.user.Role;
-import com.example.board.user.User;
+import com.example.user.Gender;
+import com.example.user.Role;
+import com.example.user.User;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 public class UserDto {

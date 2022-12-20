@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${kind}"></title>
+</head>
+<body>
+    <div class="layout">
+        <table>
+            <thead>
+                <tr>
+                    <th>제목</th>
+                    <th>글쓴이</th>
+                    <th>작성시간</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="post : ${list}">
+                    <td>
+                        <a th:text="${post.title}" th:href="@{'/posts/' + ${post.id}}">zzz</a>
+                    </td>
+                    <td th:text="${post.user_id}"></td>
+                    <td th:text="${post.writtenDate}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

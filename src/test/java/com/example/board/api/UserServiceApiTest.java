@@ -1,24 +1,21 @@
 package com.example.board.api;
 
 import com.example.board.BaseTest;
-import com.example.board.user.Gender;
-import com.example.board.user.Role;
-import com.example.board.user.User;
-import com.example.board.user.UserDto.JoinRequestDto;
-import com.example.board.user.UserDto.LoginRequestDto;
-import com.example.board.user.UserDto.UpdateRequestDto;
-import com.example.board.user.except.IncorrectPasswordException;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.user.Gender;
+import com.example.user.Role;
+import com.example.user.User;
+import com.example.user.UserDto.JoinRequestDto;
+import com.example.user.UserDto.LoginRequestDto;
+import com.example.user.UserDto.UpdateRequestDto;
+import com.example.user.except.IncorrectPasswordException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
