@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 작성</title>
+</head>
+<style>
+    .layout{
+        width: 1000px;
+        margin : 0 auto;
+    }
+</style>
+<body>
+    <div class="layout">
+        <form action="/postsForm" method="post">
+            <select name="Kind">
+                <option value="NORMAL">NORMAL</option>
+                <option value="NOTICE">NOTICE</option>
+                <option value="MANAGE">MANAGE</option>
+            </select>
+            <input name="title" type="text">
+            <textarea name="content"></textarea>
+            <button type = "submit">제출</button>
+        </form>
+    </div>
+</body>
+</html>
