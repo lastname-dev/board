@@ -1,18 +1,18 @@
-package com.example.board.user;
+package com.example.user;
 
-import com.example.board.user.UserDto.JoinRequestDto;
-import com.example.board.user.UserDto.UpdateRequestDto;
-import com.example.board.user.except.IncorrectPasswordException;
+import com.example.board.post.Post;
+import com.example.user.UserDto.JoinRequestDto;
+import com.example.user.UserDto.UpdateRequestDto;
+import com.example.user.except.IncorrectPasswordException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.tomcat.jni.Time;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Getter
@@ -40,10 +40,8 @@ public class User {
     @DateTimeFormat
     LocalDateTime recentLoginDate;
 
-
-    //  @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "POST_ID")
-//    List<Post> postList = new ArrayList<>();
+    @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL)
+    List<Post> postList = new ArrayList<>();
 
     @Builder
     public User(JoinRequestDto joinRequestDto) {

@@ -1,24 +1,25 @@
 package com.example.board.api;
 
 import com.example.board.BaseTest;
-import com.example.board.user.Gender;
-import com.example.board.user.Role;
-import com.example.board.user.User;
-import com.example.board.user.UserDto.JoinRequestDto;
-import com.example.board.user.UserDto.LoginRequestDto;
-import com.example.board.user.UserDto.UpdateRequestDto;
-import com.example.board.user.except.IncorrectPasswordException;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.user.Gender;
+import com.example.user.Role;
+import com.example.user.User;
+import com.example.user.UserDto.JoinRequestDto;
+import com.example.user.UserDto.LoginRequestDto;
+import com.example.user.UserDto.SessionUserDto;
+import com.example.user.UserDto.UpdateRequestDto;
+import com.example.user.except.IncorrectPasswordException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+//import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -27,13 +28,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 public class UserServiceApiTest extends BaseTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private MockHttpSession httpSession;
 
     String url = "https://localhost:8080/users";
 
@@ -46,6 +49,7 @@ public class UserServiceApiTest extends BaseTest {
     }
 
     @Test
+    //@WithMockUser(roles = "USER")
     public void joinTest() throws Exception {
         //given
         JoinRequestDto joinRequestDto = joinProc();
@@ -114,6 +118,34 @@ public class UserServiceApiTest extends BaseTest {
     }
 
     @Test
+    public void sessionTest() throws Exception {
+        //given
+        mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(joinProc())))
+                .andExpect(status().isOk());
+
+        LoginRequestDto loginRequestDto = new LoginRequestDto();
+        loginRequestDto.setEmail(email);
+        loginRequestDto.setPassword("비밀번호");
+
+        //when
+        mockMvc.perform(post(url + "/login").session(httpSession)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(loginRequestDto)))
+                .andExpect(status().isOk());
+
+        //then
+        assertThat(httpSession.getAttribute(email)).isInstanceOf(SessionUserDto.class);
+
+        SessionUserDto dto = (SessionUserDto) httpSession.getAttribute(email);
+
+        User user = userRepository.findByEmail(dto.getEmail());
+
+        assertThat(user.getEmail()).isEqualTo(email);
+    }
+
+    @Test
     public void updateTest() throws Exception {
         //given
         mockMvc.perform(post(url)
@@ -142,8 +174,9 @@ public class UserServiceApiTest extends BaseTest {
         assertThat(user.getPassword()).isEqualTo("새로운 비밀번호");
         assertThat(user.getGender()).isEqualTo(Gender.FEMALE);
     }
+
     @Test
-    public void deleteTest() throws Exception{
+    public void deleteTest() throws Exception {
         //given
         mockMvc.perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -153,7 +186,7 @@ public class UserServiceApiTest extends BaseTest {
         Integer id = userRepository.findByEmail(email).getId();
 
         //when
-        mockMvc.perform(delete(url + "/" +id));
+        mockMvc.perform(delete(url + "/" + id));
 
         //then
         User user = userRepository.findByEmail(email);
