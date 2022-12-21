@@ -1,6 +1,5 @@
-package com.example.user.UserDto;
+package com.example.board.user.UserDto;
 
-import com.example.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

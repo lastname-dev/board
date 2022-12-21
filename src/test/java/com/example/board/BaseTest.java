@@ -1,6 +1,6 @@
 package com.example.board;
 
-import com.example.user.UserRepository;
+import com.example.board.user.UserRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

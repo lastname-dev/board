@@ -1,6 +1,6 @@
-//package com.example.config.auth;
+//package com.example.board.auth;
 //
-//import com.example.user.Role;
+//import com.example.board.user.Role;
 //import lombok.RequiredArgsConstructor;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;

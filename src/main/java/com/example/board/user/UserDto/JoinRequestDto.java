@@ -1,7 +1,7 @@
-package com.example.user.UserDto;
+package com.example.board.user.UserDto;
 
-import com.example.user.Gender;
-import com.example.user.Role;
+import com.example.board.user.Gender;
+import com.example.board.user.Role;
 import lombok.Getter;
 import lombok.Setter;
 

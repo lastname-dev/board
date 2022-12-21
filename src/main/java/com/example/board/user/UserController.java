@@ -1,10 +1,10 @@
-package com.example.user;
+package com.example.board.user;
 
-import com.example.user.UserDto.JoinRequestDto;
-import com.example.user.UserDto.LoginRequestDto;
-import com.example.user.UserDto.SessionUserDto;
-import com.example.user.UserDto.UpdateRequestDto;
-import com.example.user.except.IncorrectPasswordException;
+import com.example.board.user.UserDto.JoinRequestDto;
+import com.example.board.user.UserDto.LoginRequestDto;
+import com.example.board.user.UserDto.SessionUserDto;
+import com.example.board.user.UserDto.UpdateRequestDto;
+import com.example.board.user.except.IncorrectPasswordException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

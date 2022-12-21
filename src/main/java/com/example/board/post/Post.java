@@ -1,12 +1,10 @@
-package com.example.post;
+package com.example.board.post;
 
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
-@Data
 @Getter
 @NoArgsConstructor
 public class Post extends BaseTimeEntity {

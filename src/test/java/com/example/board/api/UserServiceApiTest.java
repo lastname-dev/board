@@ -1,14 +1,14 @@
 package com.example.board.api;
 
 import com.example.board.BaseTest;
-import com.example.user.Gender;
-import com.example.user.Role;
-import com.example.user.User;
-import com.example.user.UserDto.JoinRequestDto;
-import com.example.user.UserDto.LoginRequestDto;
-import com.example.user.UserDto.SessionUserDto;
-import com.example.user.UserDto.UpdateRequestDto;
-import com.example.user.except.IncorrectPasswordException;
+import com.example.board.user.Gender;
+import com.example.board.user.Role;
+import com.example.board.user.User;
+import com.example.board.user.UserDto.JoinRequestDto;
+import com.example.board.user.UserDto.LoginRequestDto;
+import com.example.board.user.UserDto.SessionUserDto;
+import com.example.board.user.UserDto.UpdateRequestDto;
+import com.example.board.user.except.IncorrectPasswordException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,12 +18,10 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;

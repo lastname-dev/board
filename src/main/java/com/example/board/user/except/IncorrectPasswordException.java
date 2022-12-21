@@ -1,4 +1,4 @@
-package com.example.user.except;
+package com.example.board.user.except;
 
 public class IncorrectPasswordException extends RuntimeException{
     public IncorrectPasswordException(){

@@ -1,7 +1,7 @@
-package com.example.user;
+package com.example.board.user;
 
-import com.example.user.UserDto.*;
-import com.example.user.except.IncorrectPasswordException;
+import com.example.board.user.UserDto.*;
+import com.example.board.user.except.IncorrectPasswordException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,6 @@ import javax.transaction.Transactional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final HttpSession httpSession;
 
     public void create(JoinRequestDto joinRequestDto) throws IllegalAccessException {
 
