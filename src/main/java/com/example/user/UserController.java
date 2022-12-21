@@ -2,10 +2,14 @@ package com.example.user;
 
 import com.example.user.UserDto.JoinRequestDto;
 import com.example.user.UserDto.LoginRequestDto;
+import com.example.user.UserDto.SessionUserDto;
 import com.example.user.UserDto.UpdateRequestDto;
 import com.example.user.except.IncorrectPasswordException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 @RequiredArgsConstructor
@@ -23,8 +27,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDto loginRequestDto) throws IncorrectPasswordException {
+    public String login(@RequestBody LoginRequestDto loginRequestDto,
+                        HttpServletRequest httpServletRequest) throws IncorrectPasswordException {
         userService.login(loginRequestDto);
+
+        HttpSession httpSession = httpServletRequest.getSession();
+
+        httpSession.setAttribute(loginRequestDto.getEmail(), new SessionUserDto(loginRequestDto.getEmail()));
 
         return "/";
     }
