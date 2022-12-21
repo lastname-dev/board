@@ -5,6 +5,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 @Controller
 public class PostController {
 
@@ -21,7 +25,10 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public String Write(PostDto postdto){
+    public String Write(PostDto postdto, HttpServletRequest httpServletRequest){
+
+        HttpSession httpSession = httpServletRequest.getSession();
+        System.out.println(httpSession);
 
         postService.write(postdto);
 
@@ -61,6 +68,7 @@ public class PostController {
         postdtotemp.setTitle(postdto.getTitle());
         postdtotemp.setContent(postdto.getContent());
         postdtotemp.setKind(postdto.getKind());
+        postdtotemp.setWrittenDate(postdto.getWrittenDate());
 
         postService.write(postdtotemp);
         return "redirect:/";

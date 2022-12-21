@@ -15,16 +15,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostDto {
 
-
     private Integer id;
     private String title;
     private String Content;
-    private String user_id="aa";
+    private String user_email="aa";
+
     @Enumerated(EnumType.STRING)
     private Kind kind;
+
     private LocalDateTime writtenDate;
 
-    public Post toEntity() {
-        return new Post(id,title,Content,user_id,kind);
-    }
 }
