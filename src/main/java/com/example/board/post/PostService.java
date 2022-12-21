@@ -1,8 +1,7 @@
-package com.example.post;
+package com.example.board.post;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,5 +35,8 @@ public class PostService {
     public PostDto postView(Integer id) {
         Post post = postRepository.findById(id).get();
         return post.toDto();
+    }
+    public void delete(Integer id) {
+        postRepository.deleteById(id);
     }
 }

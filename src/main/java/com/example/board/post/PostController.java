@@ -1,12 +1,9 @@
-package com.example.post;
+package com.example.board.post;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class PostController {
@@ -19,7 +16,7 @@ public class PostController {
         return "home";
     }
     @GetMapping("/postsForm")
-    public String Form(){
+    public String writeForm(){
         return "post";
     }
 
@@ -28,7 +25,7 @@ public class PostController {
 
         postService.write(postdto);
 
-        return "postlist";
+        return "redirect:/";
     }
     @GetMapping("/posts")
     public String View(Model model , @RequestParam Kind kind, @RequestParam(defaultValue = "1") Integer page ) {
@@ -42,6 +39,31 @@ public class PostController {
 
         model.addAttribute("post",postService.postView(postId));
         return "postview";
+    }
+    @DeleteMapping("/posts/{postId}")
+    public String delete(@PathVariable Integer postId) {
+
+        postService.delete(postId);
+
+        return "redirect:/";
+    }
+    @GetMapping("/posts/{postId}/modify")
+    public String modifyForm(@PathVariable Integer postId,
+                             Model model){
+        model.addAttribute("post",postService.postView(postId));
+
+        return "postmodify";
+    }
+    @PutMapping("posts/{postId}")
+    public String modify(@PathVariable Integer postId, PostDto postdto){
+
+        PostDto postdtotemp = postService.postView(postId);
+        postdtotemp.setTitle(postdto.getTitle());
+        postdtotemp.setContent(postdto.getContent());
+        postdtotemp.setKind(postdto.getKind());
+
+        postService.write(postdtotemp);
+        return "redirect:/";
     }
 }
 

@@ -1,9 +1,8 @@
-package com.example.post;
+package com.example.board.post;
 
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Data
