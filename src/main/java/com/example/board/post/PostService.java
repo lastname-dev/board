@@ -1,7 +1,7 @@
 package com.example.board.post;
 
-import com.example.user.User;
-import com.example.user.UserRepository;
+import com.example.board.user.User;
+import com.example.board.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

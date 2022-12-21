@@ -1,6 +1,6 @@
 package com.example.board.post;
 
-import com.example.user.User;
+import com.example.board.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,8 +20,7 @@ public class Post extends BaseTimeEntity {
     String title;
     String content;
 
-
-    @ManyToOne(targetEntity = User.class)
+    @ManyToOne
     @JoinColumn(name = "USER_ID")
     User user;
 
