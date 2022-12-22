@@ -19,7 +19,7 @@ public class PostDto {
     private Integer id;
     private String title;
     private String Content;
-    private String user_email="aa";
+    private String user_email;
 
     @Enumerated(EnumType.STRING)
     private Kind kind;

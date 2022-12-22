@@ -26,7 +26,7 @@ public class SecurityConfig {
 
         http.authorizeRequests()
                 .antMatchers("/postsForm").hasAuthority("ROLE_USER")
-                .antMatchers("/posts*").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/posts*").hasAuthority("ROLE_USER")
                 .antMatchers("/users/loginForm", "/").permitAll();
 
         http.formLogin()
