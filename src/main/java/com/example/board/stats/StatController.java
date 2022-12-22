@@ -7,10 +7,4 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class StatController {
 
-    @GetMapping("/stats")
-    public String show(Model model){
-        model.addAttribute("list",StatService.show());
-
-        return "statview";
-    }
 }
