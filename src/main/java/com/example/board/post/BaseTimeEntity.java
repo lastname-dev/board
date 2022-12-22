@@ -16,4 +16,7 @@ public abstract class BaseTimeEntity {
     @CreatedDate
     private LocalDateTime writtenDate;
 
+    public void setWrittenDate(LocalDateTime writtenDate){
+        this.writtenDate = writtenDate;
+    }
 }

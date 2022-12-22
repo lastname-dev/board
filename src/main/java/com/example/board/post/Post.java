@@ -27,8 +27,10 @@ public class Post extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     Kind kind;
 
+
+
     @Builder
-    public Post(Integer id, String title, String content, User user, Kind kind) {
+    public Post(Integer id, String title, String content, User user, Kind kind, String writtenDate) {
         this.id = id;
         this.title = title;
         this.content = content;
