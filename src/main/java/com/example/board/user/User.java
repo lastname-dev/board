@@ -48,7 +48,7 @@ public class User {
         this.email = joinRequestDto.getEmail();
         this.name = joinRequestDto.getName();
         this.password = joinRequestDto.getPassword();
-        this.phone = joinRequestDto.getCall();
+        this.phone = joinRequestDto.getPhone();
         this.age = joinRequestDto.getAge();
         this.gender = joinRequestDto.getGender();
 
@@ -57,12 +57,12 @@ public class User {
         renewalLoginDate();
     }
 
-    public void addPost() {
-
+    public void addPost(Post post) {
+        postList.add(post);
     }
 
-    public void deletePost() {
-
+    public void deletePost(Post post) {
+        postList.remove(post);
     }
 
     public void checkPassword(String password) throws IncorrectPasswordException {
@@ -72,7 +72,7 @@ public class User {
     public void changeInfo(UpdateRequestDto updateRequestDto) {
         this.password = updateRequestDto.getPassword();
         this.name = updateRequestDto.getName();
-        this.phone = updateRequestDto.getCall();
+        this.phone = updateRequestDto.getPhone();
         this.age = updateRequestDto.getAge();
         this.gender = updateRequestDto.getGender();
     }

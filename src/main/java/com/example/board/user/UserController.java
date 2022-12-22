@@ -6,6 +6,7 @@ import com.example.board.user.UserDto.SessionUserDto;
 import com.example.board.user.UserDto.UpdateRequestDto;
 import com.example.board.user.except.IncorrectPasswordException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,38 +15,47 @@ import javax.servlet.http.HttpSession;
 
 @RequiredArgsConstructor
 @RequestMapping("/users")
-@RestController
+@Controller
 public class UserController {
 
     private final UserService userService;
 
+    @GetMapping("")
+    public String join(){
+        return "join";
+    }
+    @GetMapping("/login")
+    public String login(){
+        return "login";
+    }
+
     @PostMapping
-    public String join(@RequestBody JoinRequestDto joinRequestDto) throws IllegalAccessException {
+    public String join(JoinRequestDto joinRequestDto) throws IllegalAccessException {
         userService.create(joinRequestDto);
 
-        return "/"; // 메인화면
+        return "redirect:/"; // 메인화면
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDto loginRequestDto,
+    public String login(LoginRequestDto loginRequestDto,
                         HttpServletRequest httpServletRequest) throws IncorrectPasswordException {
         userService.login(loginRequestDto);
 
         HttpSession httpSession = httpServletRequest.getSession();
 
-        httpSession.setAttribute(loginRequestDto.getEmail(), new SessionUserDto(loginRequestDto.getEmail()));
+        httpSession.setAttribute("user", new SessionUserDto(loginRequestDto.getEmail()));
 
-        return "/";
+        return "redirect:/";
     }
 
     @GetMapping("/logout")
     public String logout() {
         // 로그아웃
-        return "/";
+        return "redirect:/";
     }
 
     @PutMapping("/{id}")
-    public void update(@RequestBody UpdateRequestDto updateRequestDto,
+    public void update(UpdateRequestDto updateRequestDto,
                        @PathVariable Integer id) {
         userService.update(id, updateRequestDto);
     }

@@ -1,5 +1,6 @@
 package com.example.board.post;
 
+import com.example.board.user.UserDto.SessionUserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,43 +17,19 @@ public class PostController {
     private PostService postService;
 
     @GetMapping("/")
-    public String Home(){
+    public String home(){
         return "home";
     }
     @GetMapping("/postsForm")
     public String writeForm(){
         return "post";
     }
-
-    @PostMapping("/posts")
-    public String Write(PostDto postdto, HttpServletRequest httpServletRequest){
-
-        HttpSession httpSession = httpServletRequest.getSession();
-        System.out.println(httpSession);
-
-        postService.write(postdto);
-
-        return "redirect:/";
-    }
     @GetMapping("/posts")
-    public String View(Model model , @RequestParam Kind kind, @RequestParam(defaultValue = "1") Integer page ) {
+    public String view(Model model , @RequestParam Kind kind, @RequestParam(defaultValue = "1") Integer page ) {
 
         model.addAttribute("list",postService.pageList(kind));
 
         return "postlist";
-    }
-    @GetMapping("/posts/{postId}")
-    public String Read(Model model , @PathVariable Integer postId){
-
-        model.addAttribute("post",postService.postView(postId));
-        return "postview";
-    }
-    @DeleteMapping("/posts/{postId}")
-    public String delete(@PathVariable Integer postId) {
-
-        postService.delete(postId);
-
-        return "redirect:/";
     }
     @GetMapping("/posts/{postId}/modify")
     public String modifyForm(@PathVariable Integer postId,
@@ -61,7 +38,32 @@ public class PostController {
 
         return "postmodify";
     }
-    @PutMapping("posts/{postId}")
+    @GetMapping("/posts/{postId}")
+    public String read(Model model , @PathVariable Integer postId){
+
+        model.addAttribute("post",postService.postView(postId));
+        return "postview";
+    }
+
+    @PostMapping("/posts")
+    public String Write(PostDto postdto, HttpServletRequest httpServletRequest){
+
+        HttpSession httpSession = httpServletRequest.getSession();
+        SessionUserDto userDto = (SessionUserDto) httpSession.getAttribute("user");
+        postdto.setUser_email(userDto.getEmail());
+        postService.write(postdto);
+        return "redirect:/";
+    }
+
+    @DeleteMapping("/posts/delete/{postId}")
+    public String delete(@PathVariable Integer postId) {
+
+        postService.delete(postId);
+
+        return "redirect:/";
+    }
+
+    @PostMapping("/posts/{postId}")
     public String modify(@PathVariable Integer postId, PostDto postdto){
 
         PostDto postdtotemp = postService.postView(postId);
@@ -70,7 +72,7 @@ public class PostController {
         postdtotemp.setKind(postdto.getKind());
         postdtotemp.setWrittenDate(postdto.getWrittenDate());
 
-        postService.write(postdtotemp);
+        postService.modify(postdtotemp);
         return "redirect:/";
     }
 }
