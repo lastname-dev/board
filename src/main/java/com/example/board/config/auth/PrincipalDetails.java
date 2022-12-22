@@ -1,5 +1,6 @@
 package com.example.board.config.auth;
 
+import com.example.board.user.Role;
 import com.example.board.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,8 +20,7 @@ public class PrincipalDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         Collection<GrantedAuthority> collection= new ArrayList<>();
-        collection.add((GrantedAuthority) () -> user.getRole().getName());
-
+        collection.add((GrantedAuthority) () -> user.getRole().toString());
         return collection;
     }
 

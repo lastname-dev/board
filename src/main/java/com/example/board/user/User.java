@@ -52,7 +52,7 @@ public class User {
         this.age = joinRequestDto.getAge();
         this.gender = joinRequestDto.getGender();
 
-        this.role = Role.USER;
+        this.role = Role.ROLE_USER;
 
         renewalLoginDate();
     }

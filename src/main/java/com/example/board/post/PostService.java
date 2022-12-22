@@ -30,6 +30,7 @@ public class PostService {
     public void modify(PostDto postdto){
         User user = userRepository.findByEmail(postdto.getUser_email());
         Post post = toEntity(postdto,user);
+        post.setWrittenDate(postdto.getWrittenDate());
         postRepository.save(post);
     }
 

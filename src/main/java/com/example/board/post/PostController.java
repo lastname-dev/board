@@ -70,10 +70,10 @@ public class PostController {
     public String modify(@PathVariable Integer postId, PostDto postdto){
 
         PostDto postdtotemp = postService.postView(postId);
+        System.out.println("시간" +postdtotemp.getWrittenDate());
         postdtotemp.setTitle(postdto.getTitle());
         postdtotemp.setContent(postdto.getContent());
         postdtotemp.setKind(postdto.getKind());
-        postdtotemp.setWrittenDate(postdto.getWrittenDate());
 
         postService.modify(postdtotemp);
         return "redirect:/";
