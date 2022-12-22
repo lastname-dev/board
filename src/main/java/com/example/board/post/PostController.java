@@ -1,7 +1,11 @@
 package com.example.board.post;
 
+import com.example.board.config.auth.PrincipalDetails;
+import com.example.board.user.User;
 import com.example.board.user.UserDto.SessionUserDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 
 @Controller
 public class PostController {
@@ -46,16 +51,14 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public String Write(PostDto postdto, HttpServletRequest httpServletRequest){
-
-        HttpSession httpSession = httpServletRequest.getSession();
-        SessionUserDto userDto = (SessionUserDto) httpSession.getAttribute("user");
-        postdto.setUser_email(userDto.getEmail());
+    public String Write(PostDto postdto, Authentication authentication){
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        postdto.setUser_email(principalDetails.getUserEmail());
         postService.write(postdto);
         return "redirect:/";
     }
 
-    @DeleteMapping("/posts/delete/{postId}")
+    @PostMapping("/posts/delete/{postId}")
     public String delete(@PathVariable Integer postId) {
 
         postService.delete(postId);

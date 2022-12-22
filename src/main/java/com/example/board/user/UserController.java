@@ -39,13 +39,13 @@ public class UserController {
     @GetMapping("/login")
     public String login(LoginRequestDto loginRequestDto,
                         HttpServletRequest httpServletRequest) throws IncorrectPasswordException {
-        userService.login(loginRequestDto);
-
-        System.out.println("로그인 진행은 되나?????????????????????????");
-
-        HttpSession httpSession = httpServletRequest.getSession();
-
-        httpSession.setAttribute("user", new SessionUserDto(loginRequestDto.getEmail()));
+//        userService.login(loginRequestDto);
+//
+//        System.out.println("로그인 진행은 되나?????????????????????????");
+//
+//        HttpSession httpSession = httpServletRequest.getSession();
+//
+//        httpSession.setAttribute("user", new SessionUserDto(loginRequestDto.getEmail()));
 
         return "redirect:/";
     }
