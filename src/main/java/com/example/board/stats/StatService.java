@@ -25,12 +25,9 @@ public class StatService {
         for (int i = 0; i <=9 ; i++) {
             statdto.addAgeCount(userRepository.countByAgeRange(i*10,i*10+9));
         }
-        System.out.println("zzzzzzzz1");
         for (int i=0; i<=5; i++){
             statdto.addTimeCount(userRepository.countByTimeRange(i*4,i*4+3));
         }
-        System.out.println("zzzzzzzz2");
-
         return statdto;
     }
 }

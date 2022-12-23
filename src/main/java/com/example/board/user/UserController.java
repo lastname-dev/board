@@ -25,7 +25,7 @@ public class UserController {
         return "join";
     }
     @GetMapping("/loginForm")
-    public String login(){
+    public String loginForm(){
         return "login";
     }
 
@@ -37,18 +37,12 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String login(LoginRequestDto loginRequestDto,
-                        HttpServletRequest httpServletRequest) throws IncorrectPasswordException {
-//        userService.login(loginRequestDto);
-//        HttpSession httpSession = httpServletRequest.getSession();
-//        httpSession.setAttribute("user", new SessionUserDto(loginRequestDto.getEmail()));
-
+    public String login() {
         return "redirect:/";
     }
 
     @GetMapping("/logout")
     public String logout() {
-        // 로그아웃
         return "redirect:/";
     }
 
