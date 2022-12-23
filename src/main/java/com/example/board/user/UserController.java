@@ -31,16 +31,17 @@ public class UserController {
                         HttpServletRequest httpServletRequest) throws IncorrectPasswordException {
         userService.login(loginRequestDto);
 
-        HttpSession httpSession = httpServletRequest.getSession();
+        httpSession = httpServletRequest.getSession();
 
-        httpSession.setAttribute(loginRequestDto.getEmail(), new SessionUserDto(loginRequestDto.getEmail()));
-
+        httpSession.setAttribute("user", new SessionUserDto(loginRequestDto.getEmail()));
         return "/";
     }
 
     @GetMapping("/logout")
     public String logout() {
-        // 로그아웃
+
+        httpSession.invalidate();
+
         return "/";
     }
 

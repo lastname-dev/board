@@ -17,7 +17,10 @@ import org.springframework.http.MediaType;
 //import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,18 +35,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserServiceApiTest extends BaseTest {
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
-    private MockHttpSession httpSession;
+    private MockHttpSession mockHttpSession;
+    @Autowired
+    WebApplicationContext context;
 
     String url = "https://localhost:8080/users";
 
     String email = "email@temp.net";
+    String password = "password";
 
     @BeforeEach
     public void clearDB() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+
         userRepository.deleteAll();
-        System.out.println("저장소 삭제");
     }
 
     @Test
@@ -75,14 +81,10 @@ public class UserServiceApiTest extends BaseTest {
 
         LocalDateTime joinDate = userRepository.findByEmail(email).getRecentLoginDate();
 
-        LoginRequestDto loginRequestDto = new LoginRequestDto();
-        loginRequestDto.setEmail(email);
-        loginRequestDto.setPassword("비밀번호");
-
         //when
         mockMvc.perform(post(url + "/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(loginRequestDto)))
+                        .content(new ObjectMapper().writeValueAsString(loginProc(email, password))))
                 .andExpect(status().isOk());
 
         //then
@@ -99,15 +101,11 @@ public class UserServiceApiTest extends BaseTest {
                         .content(new ObjectMapper().writeValueAsString(joinProc())))
                 .andExpect(status().isOk());
 
-        LoginRequestDto loginRequestDto = new LoginRequestDto();
-        loginRequestDto.setEmail(email);
-        loginRequestDto.setPassword("잘못된 비밀번호");
-
         //when
         try {
             mockMvc.perform(post(url + "/login")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(new ObjectMapper().writeValueAsString(loginRequestDto)))
+                            .content(new ObjectMapper().writeValueAsString(loginProc(email, password + "wrong"))))
                     .andExpect(status().isOk()).andDo(result -> System.out.println(result));
         } catch (IncorrectPasswordException e) {
             return;
@@ -123,24 +121,48 @@ public class UserServiceApiTest extends BaseTest {
                         .content(new ObjectMapper().writeValueAsString(joinProc())))
                 .andExpect(status().isOk());
 
-        LoginRequestDto loginRequestDto = new LoginRequestDto();
-        loginRequestDto.setEmail(email);
-        loginRequestDto.setPassword("비밀번호");
 
         //when
-        mockMvc.perform(post(url + "/login").session(httpSession)
+        mockMvc.perform(post(url + "/login").session(mockHttpSession)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(loginRequestDto)))
+                        .content(new ObjectMapper().writeValueAsString(loginProc(email, password))))
                 .andExpect(status().isOk());
 
         //then
-        assertThat(httpSession.getAttribute(email)).isInstanceOf(SessionUserDto.class);
+        assertThat(mockHttpSession.getAttribute("user")).isInstanceOf(SessionUserDto.class);
 
-        SessionUserDto dto = (SessionUserDto) httpSession.getAttribute(email);
+        SessionUserDto dto = (SessionUserDto) mockHttpSession.getAttribute("user");
 
         User user = userRepository.findByEmail(dto.getEmail());
 
         assertThat(user.getEmail()).isEqualTo(email);
+    }
+
+    // 실패작, 시간이 지나도 세션 만료가 안됨
+    @Test
+    public void sessionTimeOutTest() throws Exception {
+        //given
+        mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(joinProc())))
+                .andExpect(status().isOk());
+
+        //when
+        HttpSession httpSession = mockMvc.perform(post(url + "/login").session(mockHttpSession)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(loginProc(email, password))))
+                .andExpect(status().isOk()).andReturn().getRequest().getSession();
+
+        //then
+        assertThat(mockHttpSession.getAttribute("user")).isNotNull();
+        System.out.println(httpSession.getAttribute("user"));
+        System.out.println(mockHttpSession.getAttribute("user"));
+
+        Thread.sleep(2 * 1000);
+
+        System.out.println(mockHttpSession.getAttribute("user"));
+        System.out.println(httpSession.getAttribute("user"));
+        System.out.println("테스트 : " + mockHttpSession);
     }
 
     @Test
@@ -196,14 +218,22 @@ public class UserServiceApiTest extends BaseTest {
 
     public JoinRequestDto joinProc() {
         JoinRequestDto joinRequestDto = new JoinRequestDto();
-        joinRequestDto.setEmail("email@temp.net");
-        joinRequestDto.setPassword("비밀번호");
+        joinRequestDto.setEmail(email);
+        joinRequestDto.setPassword(password);
         joinRequestDto.setName("박이름");
         joinRequestDto.setCall("010-3333-2222");
         joinRequestDto.setAge(20);
         joinRequestDto.setGender(Gender.MALE);
 
         return joinRequestDto;
+    }
+
+    public LoginRequestDto loginProc(String email, String password) {
+        LoginRequestDto loginRequestDto = new LoginRequestDto();
+        loginRequestDto.setEmail(email);
+        loginRequestDto.setPassword(password);
+
+        return loginRequestDto;
     }
 
 }
