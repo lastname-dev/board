@@ -1,19 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>메인</title>
 </head>
 <body>
-    <a href="/posts?kind=NORMAL">일반게시판</a>
-    <a href="/posts?kind=NOTICE">공지게시판</a>
-    <a href="/posts?kind=MANAGE">운영게시판</a>
-    <a href="/users">회원가입</a>
-    <a href="/users/loginForm">로그인</a>
-    <a href="/users/logout">로그아웃</a>
-    <a href="/stats">통계</a>
+    <a href="/posts/normal">일반게시판</a>
+    <a href="/posts/notice">공지게시판</a>
+    <a href="/posts/manage">운영게시판</a>
+    <a sec:authorize="isAnonymous()" href="/users">회원가입</a>
+    <a sec:authorize="isAnonymous()" href="/users/loginForm">로그인</a>
+    <a sec:authorize="isAuthenticated()" href="/users/logout">로그아웃</a>
+    <a sec:authorize="hasRole('ROLE_ADMIN')" href="/stats">통계</a>
 </body>
 <div>
-    <a href="./postsForm">글 작성하기 </a>
+    <a sec:authorize="isAuthenticated()" href="./postsForm">글 작성하기 </a>
 </div>
+
+<b>Authenticated username:</b>
+<div sec:authorize="isAuthenticated()" sec:authentication="name"></div>
 </html>

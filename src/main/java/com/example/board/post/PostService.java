@@ -3,6 +3,9 @@ package com.example.board.post;
 import com.example.board.user.User;
 import com.example.board.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -36,10 +39,14 @@ public class PostService {
 
     //게시글 리스트 보기
 
-    public List<PostDto> pageList(Kind kind){
-        List<Post> posts = postRepository.findByKind(kind);
-        return posts.stream().map(Post::toDto).collect(Collectors.toList());
+    public Page<PostDto> pageList(Kind kind, Pageable pageable){
+        Page<Post> posts = postRepository.findByKind(kind, pageable);
+
+        List<PostDto> postL = posts.stream().map(Post::toDto).collect(Collectors.toList());
+
+        return new PageImpl<>(postL);
     }
+
     //특정 게시물 보기
 
     public PostDto postView(Integer id) {

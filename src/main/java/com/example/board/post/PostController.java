@@ -4,12 +4,14 @@ import com.example.board.config.auth.PrincipalDetails;
 import com.example.board.user.User;
 import com.example.board.user.UserDto.SessionUserDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.domain.Pageable;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -29,10 +31,31 @@ public class PostController {
     public String writeForm(){
         return "post";
     }
-    @GetMapping("/posts")
-    public String view(Model model , @RequestParam Kind kind, @RequestParam(defaultValue = "1") Integer page ) {
 
-        model.addAttribute("list",postService.pageList(kind));
+    @GetMapping("/posts/normal")
+    public String viewNormal(Model model,
+                             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        model.addAttribute("list", postService.pageList(Kind.NORMAL, pageable));
+        model.addAttribute("kind","normal");
+        return "postlist";
+    }
+
+    @GetMapping("/posts/notice")
+    public String viewNotice(Model model,
+                             @PageableDefault(sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
+
+        model.addAttribute("list", postService.pageList(Kind.NOTICE, pageable));
+        model.addAttribute("kind","notice");
+        return "postlist";
+    }
+
+    @GetMapping("/posts/manage")
+    public String viewManage(Model model,
+                             @PageableDefault(sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
+
+        model.addAttribute("list", postService.pageList(Kind.MANAGE, pageable));
+        model.addAttribute("kind","manage");
 
         return "postlist";
     }
@@ -40,7 +63,6 @@ public class PostController {
     public String modifyForm(@PathVariable Integer postId,
                              Model model){
         model.addAttribute("post",postService.postView(postId));
-
         return "postmodify";
     }
     @GetMapping("/posts/{postId}")
@@ -54,6 +76,9 @@ public class PostController {
     public String Write(PostDto postdto, Authentication authentication){
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         postdto.setUser_email(principalDetails.getUserEmail());
+        if(postdto.getKind()!=Kind.NORMAL){
+
+        }
         postService.write(postdto);
         return "redirect:/";
     }
@@ -84,3 +109,17 @@ public class PostController {
     }
 }
 
+
+//DELIMITER $$
+//
+//CREATE PROCEDURE testDataInsert()
+//BEGIN
+//    DECLARE i INT DEFAULT 1;
+//
+//    WHILE i <= 120 DO
+//        INSERT INTO board(title, content)
+//          VALUES(concat('제목',i), concat('내용',i));
+//        SET i = i + 1;
+//    END WHILE;
+//END$$
+//DELIMITER $$
