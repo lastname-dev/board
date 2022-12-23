@@ -11,7 +11,7 @@ public class JoinRequestDto {
     String email;
     String password;
     String name;
-    String call;
+    String phone;
     int age;
 
     Gender gender;

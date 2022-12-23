@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-//import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -221,7 +220,7 @@ public class UserServiceApiTest extends BaseTest {
         joinRequestDto.setEmail(email);
         joinRequestDto.setPassword(password);
         joinRequestDto.setName("박이름");
-        joinRequestDto.setCall("010-3333-2222");
+        joinRequestDto.setPhone("010-3333-2222");
         joinRequestDto.setAge(20);
         joinRequestDto.setGender(Gender.MALE);
 

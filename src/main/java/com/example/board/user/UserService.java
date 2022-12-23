@@ -1,11 +1,14 @@
 package com.example.board.user;
 
-import com.example.board.user.UserDto.*;
+import com.example.board.user.UserDto.JoinRequestDto;
+import com.example.board.user.UserDto.LoginRequestDto;
+import com.example.board.user.UserDto.UpdateRequestDto;
+import com.example.board.user.UserDto.UserDto;
 import com.example.board.user.except.IncorrectPasswordException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
 @RequiredArgsConstructor
@@ -13,11 +16,16 @@ import javax.transaction.Transactional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public void create(JoinRequestDto joinRequestDto) throws IllegalAccessException {
 
-        if(userRepository.findByEmail(joinRequestDto.getEmail()) != null)
+        if (userRepository.findByEmail(joinRequestDto.getEmail()) != null)
             throw new IllegalAccessException("이미 존재하는 아이디입니다");
+
+        // 비밀번호 암호화
+        String rawPassword = joinRequestDto.getPassword();
+        joinRequestDto.setPassword(bCryptPasswordEncoder.encode(rawPassword));
 
         User user = User.builder()
                 .joinRequestDto(joinRequestDto)

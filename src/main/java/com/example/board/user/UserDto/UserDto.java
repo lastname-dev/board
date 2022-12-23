@@ -14,7 +14,7 @@ public class UserDto {
     String email;
     String password;
     String name;
-    String call;
+    String phone;
     int age;
     Gender gender;
     Role role;
@@ -26,7 +26,7 @@ public class UserDto {
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.name = user.getName();
-        this.call = user.getPhone();
+        this.phone = user.getPhone();
         this.age = user.getAge();
         this.gender = user.getGender();
         this.role = user.getRole();

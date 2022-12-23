@@ -19,7 +19,7 @@
                     <td>
                         <a th:text="${post.title}" th:href="@{'/posts/' + ${post.id}}">zzz</a>
                     </td>
-                    <td th:text="${post.user_id}"></td>
+                    <td th:text="${post.user_email}"></td>
                     <td th:text="${post.writtenDate}"></td>
                 </tr>
             </tbody>

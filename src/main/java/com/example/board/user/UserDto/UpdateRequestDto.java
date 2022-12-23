@@ -9,7 +9,7 @@ import lombok.Setter;
 public class UpdateRequestDto {
     String password;
     String name;
-    String call;
+    String phone;
     int age;
     Gender gender;
 }
