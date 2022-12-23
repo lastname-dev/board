@@ -25,8 +25,8 @@ public class SecurityConfig {
         http.csrf().disable();
 
         http.authorizeRequests()
-                .antMatchers("/posts/manage/**", "/posts/notice/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/postsForm").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                .antMatchers("/board/manage/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/postsForm").authenticated()
                 .antMatchers("/users/loginForm", "/").permitAll();
 
         http.formLogin()

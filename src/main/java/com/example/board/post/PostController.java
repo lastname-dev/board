@@ -2,16 +2,13 @@ package com.example.board.post;
 
 import com.example.board.config.auth.PrincipalDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-
+import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
 
 @Controller
 public class PostController {
@@ -29,38 +26,24 @@ public class PostController {
         return "post";
     }
 
-    @GetMapping("/posts/normal")
-    public String viewNormal(Model model,
-                             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    @GetMapping("/board/{kind}")
+    public String viewBoard(Model model,
+                            @PathVariable("kind") String kindStr,
+                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Kind kind = Kind.valueOf(kindStr.toUpperCase());
+        // 약간 하드코딩이라 좀 불안하긴하다
 
-        model.addAttribute("list", postService.pageList(Kind.NORMAL, pageable));
-
-        return "postlist";
-    }
-
-    @GetMapping("/posts/notice")
-    public String viewNotice(Model model,
-                             @PageableDefault(sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
-
-        model.addAttribute("list", postService.pageList(Kind.NOTICE, pageable));
+        model.addAttribute("list", postService.pageList(kind, pageable));
+        model.addAttribute("kind", kind.toString().toLowerCase());
 
         return "postlist";
     }
 
-    @GetMapping("/posts/manage")
-    public String viewManage(Model model,
-                             @PageableDefault(sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
-
-        model.addAttribute("list", postService.pageList(Kind.MANAGE, pageable));
-
-        return "postlist";
-    }
 
     @GetMapping("/posts/{postId}/modify")
     public String modifyForm(@PathVariable Integer postId,
                              Model model) {
         model.addAttribute("post", postService.postView(postId));
-
         return "postmodify";
     }
 
@@ -88,7 +71,11 @@ public class PostController {
     }
 
     @PostMapping("/posts/{postId}")
-    public String modify(@PathVariable Integer postId, PostDto postdto) {
+    public String modify(@PathVariable Integer postId, PostDto postdto, Authentication authentication) {
+
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        if (principalDetails.getUserEmail() != postdto.getUser_email())
+            return "redirect:/";
 
         PostDto postdtotemp = postService.postView(postId);
         System.out.println("시간" + postdtotemp.getWrittenDate());

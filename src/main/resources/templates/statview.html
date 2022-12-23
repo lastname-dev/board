@@ -14,10 +14,21 @@
         </tr>
         </thead>
         <tbody>
-        <td th:text="${stat.FemaleCount}">female</td>
-        <td th:text="${stat.MaleCount}">male</td>
+        <tr>
+            <td th:text="여자"></td>
+            <td th:text="${stat.FemaleCount}"></td>
+        </tr>
+        <tr>
+            <td th:text="남자"></td>
+        <td th:text="${stat.MaleCount}"></td>
+        </tr>
         <tr th:each="age : ${stat.Agecount}">
+            <td th:text="연령별"></td>
             <td th:text="${age}"></td>
+        </tr>
+        <tr th:each="time : ${stat.timeCount}">
+            <td th:text="시간별"></td>
+            <td th:text="${time}"></td>
         </tr>
         </tbody>
     </table>

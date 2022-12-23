@@ -51,8 +51,7 @@ public class User {
         this.phone = joinRequestDto.getPhone();
         this.age = joinRequestDto.getAge();
         this.gender = joinRequestDto.getGender();
-
-        this.role = Role.ROLE_USER;
+        this.role = joinRequestDto.getRole();
 
         renewalLoginDate();
     }

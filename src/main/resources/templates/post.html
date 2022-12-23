@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>게시글 작성</title>
@@ -15,8 +15,8 @@
         <form action="/posts" method="post">
             <select name="Kind">
                 <option value="NORMAL">NORMAL</option>
-                <option value="NOTICE">NOTICE</option>
-                <option value="MANAGE">MANAGE</option>
+                <option sec:authorize="hasRole('ROLE_ADMIN')"value="NOTICE">NOTICE</option>
+                <option sec:authorize="hasRole('ROLE_ADMIN')"value="MANAGE">MANAGE</option>
             </select>
             <input name="title" type="text">
             <textarea name="content"></textarea>

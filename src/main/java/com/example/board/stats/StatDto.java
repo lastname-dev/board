@@ -9,15 +9,20 @@ import java.util.List;
 @Setter
 @Getter
 public class StatDto {
-    Long MaleCount;
-    Long FemaleCount;
-    List<Long> Agecount;
+    Long maleCount;
+    Long femaleCount;
+    List<Long> ageCount;
+    List<Long> timeCount;
 
     StatDto(){
-        Agecount = new ArrayList<Long>();
+        ageCount = new ArrayList<Long>();
+        timeCount = new ArrayList<Long>();
     }
 
+
     public void addAgeCount(Long num){
-        Agecount.add(num);
+        ageCount.add(num);
     }
+
+    public void addTimeCount(Long num) {timeCount.add(num);}
 }
