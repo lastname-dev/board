@@ -1,9 +1,10 @@
 package com.example.board.model.user;
 
+import com.example.board.model.comment.Comment;
 import com.example.board.model.post.Post;
+import com.example.board.model.user.except.IncorrectPasswordException;
 import com.example.board.model.user.userDto.JoinRequestDto;
 import com.example.board.model.user.userDto.UpdateRequestDto;
-import com.example.board.model.user.except.IncorrectPasswordException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,8 +41,11 @@ public class User {
     @DateTimeFormat
     LocalDateTime recentLoginDate;
 
-    @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Post> postList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    List<Comment> commentList = new ArrayList<>();
 
     @Builder
     public User(JoinRequestDto joinRequestDto) {
@@ -62,6 +66,14 @@ public class User {
 
     public void deletePost(Post post) {
         postList.remove(post);
+    }
+
+    public void addComment(Comment comment) {
+        commentList.add(comment);
+    }
+
+    public void deleteComment(Comment comment) {
+        commentList.remove(comment);
     }
 
     public void checkPassword(String password) throws IncorrectPasswordException {

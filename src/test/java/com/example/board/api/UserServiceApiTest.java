@@ -5,37 +5,31 @@ import com.example.board.model.user.Gender;
 import com.example.board.model.user.Role;
 import com.example.board.model.user.User;
 import com.example.board.model.user.userDto.JoinRequestDto;
-import com.example.board.model.user.userDto.LoginRequestDto;
-import com.example.board.model.user.userDto.SessionUserDto;
 import com.example.board.model.user.userDto.UpdateRequestDto;
-import com.example.board.model.user.except.IncorrectPasswordException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.http.HttpSession;
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 public class UserServiceApiTest extends BaseTest {
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private MockHttpSession mockHttpSession;
     @Autowired
     WebApplicationContext context;
 
@@ -46,13 +40,16 @@ public class UserServiceApiTest extends BaseTest {
 
     @BeforeEach
     public void clearDB() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
 
         userRepository.deleteAll();
     }
 
     @Test
-    //@WithMockUser(roles = "USER")
+    @WithAnonymousUser
     public void joinTest() throws Exception {
         //given
         JoinRequestDto joinRequestDto = joinProc();
@@ -67,104 +64,59 @@ public class UserServiceApiTest extends BaseTest {
         User user = userRepository.findByEmail(email);
 
         assertThat(user.getEmail()).isEqualTo(email);
-        assertThat(user.getRole()).isEqualTo(Role.USER);
+        assertThat(user.getRole()).isEqualTo(Role.ROLE_USER);
     }
 
     @Test
+    @WithAnonymousUser
     public void successLoginTest() throws Exception {
         //given
         mockMvc.perform(post(url)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(joinProc())))
-                .andExpect(status().isOk());
-
-        LocalDateTime joinDate = userRepository.findByEmail(email).getRecentLoginDate();
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(joinProc())));
 
         //when
+        mockMvc.perform(formLogin()
+                        .user(email, "email")
+                        .password(password, "password"))
+                .andExpect(status().is4xxClientError());
+
         mockMvc.perform(post(url + "/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(loginProc(email, password))))
+                        .with(user(email).password(password)))
                 .andExpect(status().isOk());
 
         //then
         User user = userRepository.findByEmail(email);
-
-        assertThat(joinDate).isBefore(user.getRecentLoginDate());
     }
 
     @Test
+    @WithAnonymousUser
     public void wrongPasswordLoginTest() throws Exception {
         //given
         mockMvc.perform(post(url)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(joinProc())))
-                .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(joinProc())));
 
         //when
-        try {
-            mockMvc.perform(post(url + "/login")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(new ObjectMapper().writeValueAsString(loginProc(email, password + "wrong"))))
-                    .andExpect(status().isOk()).andDo(result -> System.out.println(result));
-        } catch (IncorrectPasswordException e) {
-            return;
-        }
-        fail("");
+        mockMvc.perform(formLogin()
+                        .user(email, "email")
+                        .password(password + "wrong", "password"))
+                .andExpect(status().is4xxClientError());
+
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     public void sessionTest() throws Exception {
         //given
         mockMvc.perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(joinProc())))
                 .andExpect(status().isOk());
-
-
-        //when
-        mockMvc.perform(post(url + "/login").session(mockHttpSession)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(loginProc(email, password))))
-                .andExpect(status().isOk());
-
-        //then
-        assertThat(mockHttpSession.getAttribute("user")).isInstanceOf(SessionUserDto.class);
-
-        SessionUserDto dto = (SessionUserDto) mockHttpSession.getAttribute("user");
-
-        User user = userRepository.findByEmail(dto.getEmail());
-
-        assertThat(user.getEmail()).isEqualTo(email);
-    }
-
-    // 실패작, 시간이 지나도 세션 만료가 안됨
-    @Test
-    public void sessionTimeOutTest() throws Exception {
-        //given
-        mockMvc.perform(post(url)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(joinProc())))
-                .andExpect(status().isOk());
-
-        //when
-        HttpSession httpSession = mockMvc.perform(post(url + "/login").session(mockHttpSession)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(loginProc(email, password))))
-                .andExpect(status().isOk()).andReturn().getRequest().getSession();
-
-        //then
-        assertThat(mockHttpSession.getAttribute("user")).isNotNull();
-        System.out.println(httpSession.getAttribute("user"));
-        System.out.println(mockHttpSession.getAttribute("user"));
-
-        Thread.sleep(2 * 1000);
-
-        System.out.println(mockHttpSession.getAttribute("user"));
-        System.out.println(httpSession.getAttribute("user"));
-        System.out.println("테스트 : " + mockHttpSession);
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     public void updateTest() throws Exception {
         //given
         mockMvc.perform(post(url)
@@ -195,6 +147,7 @@ public class UserServiceApiTest extends BaseTest {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     public void deleteTest() throws Exception {
         //given
         mockMvc.perform(post(url)
@@ -223,16 +176,21 @@ public class UserServiceApiTest extends BaseTest {
         joinRequestDto.setPhone("010-3333-2222");
         joinRequestDto.setAge(20);
         joinRequestDto.setGender(Gender.MALE);
+        joinRequestDto.setRole(Role.ROLE_USER);
 
         return joinRequestDto;
     }
 
-    public LoginRequestDto loginProc(String email, String password) {
-        LoginRequestDto loginRequestDto = new LoginRequestDto();
-        loginRequestDto.setEmail(email);
-        loginRequestDto.setPassword(password);
+    public void loginProc() throws Exception {
+        mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(joinProc())))
+                .andExpect(status().isOk());
 
-        return loginRequestDto;
+        mockMvc.perform(formLogin()
+                        .user(email)
+                        .password(password))
+                .andExpect(status().isOk());
+        // 회원가입 + 로그인
     }
-
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/users")
-@Controller
+@RestController
 public class UserController {
 
     private final UserService userService;
@@ -25,24 +25,24 @@ public class UserController {
     }
 
     @PostMapping
-    public String join(JoinRequestDto joinRequestDto) throws IllegalAccessException {
+    public String join(@RequestBody JoinRequestDto joinRequestDto) throws IllegalAccessException {
         userService.create(joinRequestDto);
 
         return "redirect:/"; // 메인화면
     }
-
-    @GetMapping("/login")
-    public String login() {
-        return "redirect:/";
-    }
-
-    @GetMapping("/logout")
-    public String logout() {
-        return "redirect:/";
-    }
+//
+//    @GetMapping("/login")
+//    public String login() {
+//        return "redirect:/";
+//    }
+//
+//    @GetMapping("/logout")
+//    public String logout() {
+//        return "redirect:/";
+//    }
 
     @PutMapping("/{id}")
-    public void update(UpdateRequestDto updateRequestDto,
+    public void update(@RequestBody UpdateRequestDto updateRequestDto,
                        @PathVariable Integer id) {
         userService.update(id, updateRequestDto);
     }

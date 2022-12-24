@@ -27,7 +27,7 @@ public class SecurityConfig {
         http.authorizeRequests()
                 .antMatchers("/board/manage/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/postsForm").authenticated()
-                .antMatchers("/users/loginForm", "/").permitAll();
+                .antMatchers("/users/loginForm", "/users/login", "/").permitAll();
 
         http.formLogin()
                 .loginPage("/users/loginForm")// 로그인폼 등록, 기존 시큐리티의 로그인폼이 아닌 다른 폼을 사용하겠다

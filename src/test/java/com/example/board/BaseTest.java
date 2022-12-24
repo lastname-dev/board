@@ -18,7 +18,5 @@ import javax.transaction.Transactional;
 public class BaseTest {
 
     @Autowired
-    protected UserRepository userRepository;
-
-
+    public UserRepository userRepository;
 }

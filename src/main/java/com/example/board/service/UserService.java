@@ -1,7 +1,6 @@
 package com.example.board.service;
 
 import com.example.board.model.user.userDto.JoinRequestDto;
-import com.example.board.model.user.userDto.LoginRequestDto;
 import com.example.board.model.user.userDto.UpdateRequestDto;
 import com.example.board.model.user.userDto.UserDto;
 import com.example.board.repository.UserRepository;
@@ -44,13 +43,6 @@ public class UserService {
 
     public void delete(Integer id) {
         userRepository.deleteById(id);
-    }
-
-    public void login(LoginRequestDto loginRequestDto) throws IncorrectPasswordException {
-        User user = userRepository.findByEmail(loginRequestDto.getEmail());
-        user.checkPassword(loginRequestDto.getPassword());
-
-        user.renewalLoginDate();
     }
 
     public UserDto findEmail(String email) {
