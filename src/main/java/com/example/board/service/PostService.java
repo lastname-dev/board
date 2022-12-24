@@ -1,7 +1,11 @@
-package com.example.board.post;
+package com.example.board.service;
 
-import com.example.board.user.User;
-import com.example.board.user.UserRepository;
+import com.example.board.model.post.Kind;
+import com.example.board.model.post.Post;
+import com.example.board.model.post.PostDto;
+import com.example.board.repository.PostRepository;
+import com.example.board.model.user.User;
+import com.example.board.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -9,9 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.beans.Transient;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

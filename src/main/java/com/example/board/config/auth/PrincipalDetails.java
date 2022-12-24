@@ -1,7 +1,6 @@
 package com.example.board.config.auth;
 
-import com.example.board.user.Role;
-import com.example.board.user.User;
+import com.example.board.model.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

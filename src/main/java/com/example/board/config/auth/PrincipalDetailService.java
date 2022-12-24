@@ -1,7 +1,7 @@
 package com.example.board.config.auth;
 
-import com.example.board.user.User;
-import com.example.board.user.UserRepository;
+import com.example.board.model.user.User;
+import com.example.board.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

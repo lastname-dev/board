@@ -1,14 +1,14 @@
 package com.example.board.api;
 
 import com.example.board.BaseTest;
-import com.example.board.user.Gender;
-import com.example.board.user.Role;
-import com.example.board.user.User;
-import com.example.board.user.UserDto.JoinRequestDto;
-import com.example.board.user.UserDto.LoginRequestDto;
-import com.example.board.user.UserDto.SessionUserDto;
-import com.example.board.user.UserDto.UpdateRequestDto;
-import com.example.board.user.except.IncorrectPasswordException;
+import com.example.board.model.user.Gender;
+import com.example.board.model.user.Role;
+import com.example.board.model.user.User;
+import com.example.board.model.user.userDto.JoinRequestDto;
+import com.example.board.model.user.userDto.LoginRequestDto;
+import com.example.board.model.user.userDto.SessionUserDto;
+import com.example.board.model.user.userDto.UpdateRequestDto;
+import com.example.board.model.user.except.IncorrectPasswordException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

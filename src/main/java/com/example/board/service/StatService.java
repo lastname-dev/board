@@ -1,14 +1,11 @@
-package com.example.board.stats;
+package com.example.board.service;
 
-import com.example.board.post.PostRepository;
-import com.example.board.user.Gender;
-import com.example.board.user.UserRepository;
+import com.example.board.repository.PostRepository;
+import com.example.board.model.stats.StatDto;
+import com.example.board.model.user.Gender;
+import com.example.board.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 @Service
 public class StatService {

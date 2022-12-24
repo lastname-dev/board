@@ -1,6 +1,9 @@
-package com.example.board.post;
+package com.example.board.controller;
 
 import com.example.board.config.auth.PrincipalDetails;
+import com.example.board.model.post.Kind;
+import com.example.board.model.post.PostDto;
+import com.example.board.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;

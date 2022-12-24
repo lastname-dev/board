@@ -1,10 +1,12 @@
-package com.example.board.user;
+package com.example.board.service;
 
-import com.example.board.user.UserDto.JoinRequestDto;
-import com.example.board.user.UserDto.LoginRequestDto;
-import com.example.board.user.UserDto.UpdateRequestDto;
-import com.example.board.user.UserDto.UserDto;
-import com.example.board.user.except.IncorrectPasswordException;
+import com.example.board.model.user.userDto.JoinRequestDto;
+import com.example.board.model.user.userDto.LoginRequestDto;
+import com.example.board.model.user.userDto.UpdateRequestDto;
+import com.example.board.model.user.userDto.UserDto;
+import com.example.board.repository.UserRepository;
+import com.example.board.model.user.User;
+import com.example.board.model.user.except.IncorrectPasswordException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
