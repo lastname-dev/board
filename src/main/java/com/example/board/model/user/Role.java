@@ -1,4 +1,4 @@
-package com.example.board.user;
+package com.example.board.model.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

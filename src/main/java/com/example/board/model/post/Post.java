@@ -1,6 +1,7 @@
-package com.example.board.post;
+package com.example.board.model.post;
 
-import com.example.board.user.User;
+import com.example.board.model.BaseTimeEntity;
+import com.example.board.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;

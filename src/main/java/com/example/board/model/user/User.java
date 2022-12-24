@@ -1,9 +1,9 @@
-package com.example.board.user;
+package com.example.board.model.user;
 
-import com.example.board.post.Post;
-import com.example.board.user.UserDto.JoinRequestDto;
-import com.example.board.user.UserDto.UpdateRequestDto;
-import com.example.board.user.except.IncorrectPasswordException;
+import com.example.board.model.post.Post;
+import com.example.board.model.user.userDto.JoinRequestDto;
+import com.example.board.model.user.userDto.UpdateRequestDto;
+import com.example.board.model.user.except.IncorrectPasswordException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

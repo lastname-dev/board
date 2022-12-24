@@ -1,16 +1,11 @@
-package com.example.board.user;
+package com.example.board.controller;
 
-import com.example.board.user.UserDto.JoinRequestDto;
-import com.example.board.user.UserDto.LoginRequestDto;
-import com.example.board.user.UserDto.SessionUserDto;
-import com.example.board.user.UserDto.UpdateRequestDto;
-import com.example.board.user.except.IncorrectPasswordException;
+import com.example.board.model.user.userDto.JoinRequestDto;
+import com.example.board.model.user.userDto.UpdateRequestDto;
+import com.example.board.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 
 @RequiredArgsConstructor

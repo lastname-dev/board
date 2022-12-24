@@ -1,4 +1,4 @@
-package com.example.board.post;
+package com.example.board.model.post;
 
 public enum Kind {
     NOTICE,

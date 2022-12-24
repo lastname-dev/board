@@ -1,4 +1,4 @@
-package com.example.board.stats;
+package com.example.board.model.stats;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +14,7 @@ public class StatDto {
     List<Long> ageCount;
     List<Long> timeCount;
 
-    StatDto(){
+    public StatDto(){
         ageCount = new ArrayList<Long>();
         timeCount = new ArrayList<Long>();
     }

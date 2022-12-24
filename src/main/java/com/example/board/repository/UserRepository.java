@@ -1,14 +1,10 @@
-package com.example.board.user;
+package com.example.board.repository;
 
+import com.example.board.model.user.Gender;
+import com.example.board.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
-import java.time.LocalDateTime;
-import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
     User findByEmail(String email);
