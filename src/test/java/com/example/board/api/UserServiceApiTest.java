@@ -22,6 +22,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -66,45 +67,7 @@ public class UserServiceApiTest extends BaseTest {
         assertThat(user.getEmail()).isEqualTo(email);
         assertThat(user.getRole()).isEqualTo(Role.ROLE_USER);
     }
-
-    @Test
-    @WithAnonymousUser
-    public void successLoginTest() throws Exception {
-        //given
-        mockMvc.perform(post(url)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(joinProc())));
-
-        //when
-        mockMvc.perform(formLogin()
-                        .user(email, "email")
-                        .password(password, "password"))
-                .andExpect(status().is4xxClientError());
-
-        mockMvc.perform(post(url + "/login")
-                        .with(user(email).password(password)))
-                .andExpect(status().isOk());
-
-        //then
-        User user = userRepository.findByEmail(email);
-    }
-
-    @Test
-    @WithAnonymousUser
-    public void wrongPasswordLoginTest() throws Exception {
-        //given
-        mockMvc.perform(post(url)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(joinProc())));
-
-        //when
-        mockMvc.perform(formLogin()
-                        .user(email, "email")
-                        .password(password + "wrong", "password"))
-                .andExpect(status().is4xxClientError());
-
-    }
-
+    
     @Test
     @WithMockUser(roles = "USER")
     public void sessionTest() throws Exception {

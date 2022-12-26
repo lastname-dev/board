@@ -17,13 +17,17 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "COMMENT_ID")
     Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "POST_ID")
     Post post;
 
-    String comment;
+    String content;
+
+    void changeComment(String content){
+        this.content = content;
+    }
 }
