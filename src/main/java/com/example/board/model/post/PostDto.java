@@ -13,14 +13,18 @@ public class PostDto {
 
 
     @Builder
-    public PostDto(Integer id,String title,String content, String user_email,Kind kind,LocalDateTime writtenDate){
+    public PostDto(Integer id, String title, String content, String user_email, Kind kind, LocalDateTime writtenDate, Integer likes, Integer unlikes, Long views) {
         this.title = title;
         this.Content = content;
         this.kind = kind;
-        this.id= id;
-        this.user_email=user_email;
+        this.id = id;
+        this.user_email = user_email;
         this.writtenDate = writtenDate;
+        this.likes = likes;
+        this.unlikes = unlikes;
+        this.views = views;
     }
+
     private Integer id;
     private String title;
     private String Content;
@@ -31,5 +35,7 @@ public class PostDto {
 
     private LocalDateTime writtenDate;
 
-
+    private Integer likes;
+    private Integer unlikes;
+    private Long views;
 }

@@ -54,6 +54,8 @@ public class PostService {
 
     public PostDto postView(Integer id) {
         Post post = postRepository.findById(id).get();
+        post.viewIncrease();
+
         return post.toDto();
     }
 
@@ -63,6 +65,21 @@ public class PostService {
         User user = post.getUser();
         user.deletePost(post);
         postRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void like(Integer id, Boolean value){
+
+        Post post = postRepository.findById(id).get();
+
+        // like
+        if(value) {
+            post.likeIncrease();
+        }
+        // unlike
+        else{
+            post.unLikesIncrease();
+        }
     }
 
     private Post toEntity(PostDto postdto, User user) {

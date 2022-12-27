@@ -53,7 +53,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    @RequestMapping(value = "/posts/delete/{postId}", method = {RequestMethod.DELETE,RequestMethod.GET})
+    @DeleteMapping("/posts/{postId}")
     public ResponseEntity delete(@PathVariable Integer postId) {
 
         postService.delete(postId);
@@ -74,6 +74,14 @@ public class PostController {
         postdtotemp.setKind(postdto.getKind());
 
         postService.modify(postdtotemp);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @PutMapping("posts/{postId}/like")
+    public ResponseEntity like(@PathVariable("postId") Integer id,
+                                @RequestParam(value = "value") Boolean value){
+        postService.like(id, value);
+
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

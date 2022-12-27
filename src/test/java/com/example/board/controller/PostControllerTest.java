@@ -111,7 +111,6 @@ class PostControllerTest extends BaseTest {
         mockMvc.perform(delete(url+"/"+id));
 
         assertNull(postRepository.findById(id).get());
-
     }
 
     @Test
