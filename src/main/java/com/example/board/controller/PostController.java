@@ -11,30 +11,17 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 public class PostController {
 
     @Autowired
     private PostService postService;
 
-    @GetMapping("/")
-    public String home() {
-        return "home";
-    }
-
-    @GetMapping("/postsForm")
-    public String writeForm() {
-        return "post";
-    }
 
     @GetMapping("/board/{kind}")
     public ResponseEntity<List<PostDto>> viewBoard(Model model,
@@ -51,13 +38,6 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
 
-
-    @GetMapping("/posts/{postId}/modify")
-    public String modifyForm(@PathVariable Integer postId,
-                             Model model) {
-        model.addAttribute("post", postService.postView(postId));
-        return "postmodify";
-    }
 
     @GetMapping("/posts/{postId}")
     public String read(Model model, @PathVariable Integer postId) {
@@ -82,7 +62,7 @@ public class PostController {
         return "redirect:/";
     }
 
-    @PostMapping("/posts/{postId}")
+    @PutMapping("/posts/{postId}")
     public String modify(@PathVariable Integer postId, PostDto postdto, Authentication authentication) {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
@@ -90,7 +70,6 @@ public class PostController {
             return "redirect:/";
 
         PostDto postdtotemp = postService.postView(postId);
-        System.out.println("시간" + postdtotemp.getWrittenDate());
         postdtotemp.setTitle(postdto.getTitle());
         postdtotemp.setContent(postdto.getContent());
         postdtotemp.setKind(postdto.getKind());

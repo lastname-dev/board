@@ -4,6 +4,8 @@ import com.example.board.model.user.userDto.JoinRequestDto;
 import com.example.board.model.user.userDto.UpdateRequestDto;
 import com.example.board.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,20 +17,13 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("")
-    public String join(){
-        return "join";
-    }
-    @GetMapping("/loginForm")
-    public String loginForm(){
-        return "login";
-    }
 
     @PostMapping
-    public String join(@RequestBody JoinRequestDto joinRequestDto) throws IllegalAccessException {
+    public ResponseEntity join(@RequestBody JoinRequestDto joinRequestDto) throws IllegalAccessException {
+
         userService.create(joinRequestDto);
 
-        return "redirect:/"; // 메인화면
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 //
 //    @GetMapping("/login")
@@ -42,15 +37,16 @@ public class UserController {
 //    }
 
     @PutMapping("/{id}")
-    public void update(@RequestBody UpdateRequestDto updateRequestDto,
+    public ResponseEntity update(@RequestBody UpdateRequestDto updateRequestDto,
                        @PathVariable Integer id) {
         userService.update(id, updateRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Integer id) {
+    public ResponseEntity delete(@PathVariable Integer id) {
         userService.delete(id);
 
-        return "/";
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }
