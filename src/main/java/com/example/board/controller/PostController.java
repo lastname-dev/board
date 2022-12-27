@@ -5,50 +5,37 @@ import com.example.board.model.post.Kind;
 import com.example.board.model.post.PostDto;
 import com.example.board.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
-@Controller
+import java.util.List;
+
+@RestController
 public class PostController {
 
     @Autowired
     private PostService postService;
 
-    @GetMapping("/")
-    public String home() {
-        return "home";
-    }
-
-    @GetMapping("/postsForm")
-    public String writeForm() {
-        return "post";
-    }
 
     @GetMapping("/board/{kind}")
-    public String viewBoard(Model model,
-                            @PathVariable("kind") String kindStr,
-                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<Page<PostDto>> viewBoard(Model model,
+                                                   @PathVariable("kind") String kindStr,
+                                                   @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Kind kind = Kind.valueOf(kindStr.toUpperCase());
         // 약간 하드코딩이라 좀 불안하긴하다
+        Page<PostDto> postDtos = postService.pageList(kind, pageable);
 
-        model.addAttribute("list", postService.pageList(kind, pageable));
-        model.addAttribute("kind", kind.toString().toLowerCase());
-
-        return "postlist";
+        return ResponseEntity.status(HttpStatus.OK).body(postDtos);
     }
 
-
-    @GetMapping("/posts/{postId}/modify")
-    public String modifyForm(@PathVariable Integer postId,
-                             Model model) {
-        model.addAttribute("post", postService.postView(postId));
-        return "postmodify";
-    }
 
     @GetMapping("/posts/{postId}")
     public String read(Model model, @PathVariable Integer postId) {
@@ -73,7 +60,7 @@ public class PostController {
         return "redirect:/";
     }
 
-    @PostMapping("/posts/{postId}")
+    @PutMapping("/posts/{postId}")
     public String modify(@PathVariable Integer postId, PostDto postdto, Authentication authentication) {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
@@ -81,7 +68,6 @@ public class PostController {
             return "redirect:/";
 
         PostDto postdtotemp = postService.postView(postId);
-        System.out.println("시간" + postdtotemp.getWrittenDate());
         postdtotemp.setTitle(postdto.getTitle());
         postdtotemp.setContent(postdto.getContent());
         postdtotemp.setKind(postdto.getKind());
