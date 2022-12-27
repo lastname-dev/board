@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -51,11 +52,12 @@ public class PostServiceApiTest extends BaseTest {
         }
 
         //when
-        ResultActions actions = mockMvc.perform(get(url + "/board/{kind}" + "?page=0&size=3&sort=&keyword="));
+        MvcResult result = mockMvc.perform(get(url + "/board/{kind}" + "?page=0&size=3&sort=recent&keyword="))
+                .andExpect(status().isOk())
+                .andReturn();
 
         //then
-        actions.andExpect(status().isOk())
-                .andExpect()
+        result.getResponse().getContentAsString();
     }
 
 

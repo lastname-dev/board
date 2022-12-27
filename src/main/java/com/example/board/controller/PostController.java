@@ -22,7 +22,6 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-
     @GetMapping("/board/{kind}")
     public ResponseEntity<List<PostDto>> viewBoard(Model model,
                             @PathVariable("kind") String kindStr,
