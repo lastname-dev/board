@@ -21,8 +21,11 @@ public class UserController {
     @PostMapping
     public ResponseEntity join(@RequestBody JoinRequestDto joinRequestDto) throws IllegalAccessException {
 
-        userService.create(joinRequestDto);
-
+        try{
+            userService.create(joinRequestDto);
+        }catch(IllegalAccessException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 //
@@ -39,7 +42,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity update(@RequestBody UpdateRequestDto updateRequestDto,
                        @PathVariable Integer id) {
-        userService.update(id, updateRequestDto);
+        userService.update(id,updateRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
