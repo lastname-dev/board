@@ -18,9 +18,6 @@ import javax.transaction.Transactional;
 @AutoConfigureMockMvc
 @WebAppConfiguration
 public class BaseTest {
-
-
-
     @Autowired
     protected MockMvc mockMvc;
     @Autowired

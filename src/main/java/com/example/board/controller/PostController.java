@@ -27,8 +27,8 @@ public class PostController {
     public ResponseEntity<List<PostDto>> viewBoard(
                             @PathVariable("kind") String kindStr,
                             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                            @RequestParam("sort") String sort,
-                            @RequestParam("keyword") String keyword) {
+                            @RequestParam(value = "sort", defaultValue = "writtenDate") String sort,
+                            @RequestParam(value = "keyword",defaultValue = "") String keyword) {
 
         Kind kind = Kind.valueOf(kindStr.toUpperCase());
 
