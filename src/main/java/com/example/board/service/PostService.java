@@ -43,8 +43,8 @@ public class PostService {
     //게시글 리스트 보기
 
     public List<PostDto> pageList(Kind kind, String sort, String keyword, Pageable pageable) {
-        Page<Post> posts = postRepository.findBKindAndKeywordLikeOrderBySortDesc(kind, sort, keyword, pageable);
-
+//        Page<Post> posts = postRepository.findByKindAndKeywordLikeOrderBySortDesc(kind, sort, keyword, pageable);
+        List<Post> posts = postRepository.findAll();
         List<PostDto> postL = posts.stream().map(Post::toDto).collect(Collectors.toList());
 
         return postL;

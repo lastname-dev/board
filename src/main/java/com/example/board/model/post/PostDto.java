@@ -1,20 +1,26 @@
 package com.example.board.model.post;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDto {
 
+
+    @Builder
+    public PostDto(Integer id,String title,String content, String user_email,Kind kind,LocalDateTime writtenDate){
+        this.title = title;
+        this.Content = content;
+        this.kind = kind;
+        this.id= id;
+        this.user_email=user_email;
+        this.writtenDate = writtenDate;
+    }
     private Integer id;
     private String title;
     private String Content;
@@ -24,5 +30,6 @@ public class PostDto {
     private Kind kind;
 
     private LocalDateTime writtenDate;
+
 
 }

@@ -10,7 +10,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
-    //List<Post> findByKind(Kind kind);
 
-    Page<Post> findBKindAndKeywordLikeOrderBySortDesc(Kind kind, String sort, String keyword, Pageable pageable);
+
+//    Page<Post> findByKindAndKeywordLikeOrderBySortDesc(Kind kind, String sort, String keyword, Pageable pageable);
+
+
 }
