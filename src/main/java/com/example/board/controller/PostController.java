@@ -48,9 +48,6 @@ public class PostController {
 
     @PostMapping("/posts")
     public String Write(PostDto postdto, Authentication authentication) {
-
-        System.out.println(authentication.getPrincipal());
-
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         postdto.setUser_email(principalDetails.getUserEmail());
         postService.write(postdto);
