@@ -5,16 +5,14 @@ import com.example.board.model.post.Kind;
 import com.example.board.model.post.PostDto;
 import com.example.board.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -24,16 +22,19 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-
     @GetMapping("/board/{kind}")
-    public ResponseEntity<Page<PostDto>> viewBoard(Model model,
-                                                   @PathVariable("kind") String kindStr,
-                                                   @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Kind kind = Kind.valueOf(kindStr.toUpperCase());
-        // 약간 하드코딩이라 좀 불안하긴하다
-        Page<PostDto> postDtos = postService.pageList(kind, pageable);
+    public ResponseEntity<List<PostDto>> viewBoard(Model model,
+                            @PathVariable("kind") String kindStr,
+                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                            @RequestParam("sort") String sort,
+                            @RequestParam("keyword") String keyword) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(postDtos);
+        // 약간 하드코딩이라 좀 불안하긴하다
+        Kind kind = Kind.valueOf(kindStr.toUpperCase());
+
+        List<PostDto> posts = postService.pageList(kind, sort, keyword, pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
 
 
