@@ -53,7 +53,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    @DeleteMapping("/posts/delete/{postId}")
+    @RequestMapping(value = "/posts/delete/{postId}", method = {RequestMethod.DELETE,RequestMethod.GET})
     public ResponseEntity delete(@PathVariable Integer postId) {
 
         postService.delete(postId);

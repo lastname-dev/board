@@ -14,7 +14,9 @@ import com.example.board.repository.UserRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,7 +25,11 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 
+import java.util.logging.Logger;
+
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,20 +41,19 @@ class PostControllerTest extends BaseTest {
     void setUp() throws Exception {
         User user = new User(joinProc());
         PrincipalDetails userDetails = new PrincipalDetails(user);
-
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities()));
 
         mockMvc.perform(post("https://localhost:8080/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(joinProc())))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(joinProc())))
                 .andExpect(status().isOk());
+        //회원가입
     }
     @Autowired
     private ObjectMapper objectMapper;
 
     String url = "https://localhost:8080/posts";
-
 
     @Autowired
     UserRepository userRepository;
@@ -73,6 +78,7 @@ class PostControllerTest extends BaseTest {
     }
 
     @Test
+    @Order(100)
     void write() throws Exception {
         //given
 
@@ -87,14 +93,25 @@ class PostControllerTest extends BaseTest {
                 .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isOk());
 
-        Post post = postRepository.findById(1).get();
+        Post post = postRepository.findByTitle("title1");
 
         assertThat(post.getTitle()).isEqualTo("title1");
 
     }
 
     @Test
-    void delete() {
+    @Order(200)
+    void deleteTest() throws Exception {
+        write();
+
+        Logger logger = Logger.getLogger("mylogger");
+        int id= postRepository.findByTitle("title1").getId();
+        logger.info(""+id);
+
+        mockMvc.perform(delete(url+"/"+id));
+
+        assertNull(postRepository.findById(id).get());
+
     }
 
     @Test

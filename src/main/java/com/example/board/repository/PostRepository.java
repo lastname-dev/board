@@ -13,4 +13,6 @@ import org.springframework.stereotype.Repository;
 public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query(value = "select p from Post p where p.kind = :kind and p.title like %:keyword% order by p.writtenDate desc")
     Page<Post> findCustom(@Param("kind") Kind kind, @Param("keyword") String keyword, Pageable pageable);
+
+    Post findByTitle(String title);
 }
