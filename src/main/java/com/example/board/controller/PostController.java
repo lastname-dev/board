@@ -4,6 +4,7 @@ import com.example.board.config.auth.PrincipalDetails;
 import com.example.board.model.post.Kind;
 import com.example.board.model.post.PostDto;
 import com.example.board.service.PostService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,14 +17,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 public class PostController {
 
-    @Autowired
-    private PostService postService;
+    private final  PostService postService;
 
     @GetMapping("/board/{kind}")
-    public ResponseEntity<List<PostDto>> viewBoard(Model model,
+    public ResponseEntity<List<PostDto>> viewBoard(
                             @PathVariable("kind") String kindStr,
                             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                             @RequestParam("sort") String sort,
@@ -47,6 +48,9 @@ public class PostController {
 
     @PostMapping("/posts")
     public String Write(PostDto postdto, Authentication authentication) {
+
+        System.out.println(authentication.getPrincipal());
+
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         postdto.setUser_email(principalDetails.getUserEmail());
         postService.write(postdto);

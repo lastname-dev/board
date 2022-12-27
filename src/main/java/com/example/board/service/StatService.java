@@ -4,16 +4,16 @@ import com.example.board.repository.PostRepository;
 import com.example.board.model.stats.StatDto;
 import com.example.board.model.user.Gender;
 import com.example.board.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class StatService {
 
-    @Autowired
-    PostRepository postRepository;
-    @Autowired
-    UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     public StatDto show(){
         StatDto statdto = new StatDto();

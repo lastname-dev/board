@@ -6,6 +6,7 @@ import com.example.board.model.post.PostDto;
 import com.example.board.model.user.User;
 import com.example.board.repository.PostRepository;
 import com.example.board.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,13 +17,12 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class PostService {
 
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     // 글 작성 처리
 
@@ -43,7 +43,7 @@ public class PostService {
     //게시글 리스트 보기
 
     public List<PostDto> pageList(Kind kind, String sort, String keyword, Pageable pageable) {
-        Page<Post> posts = postRepository.findBKindAndKeywordLikeOrderBySortDesc(kind, sort, keyword, pageable);
+        Page<Post> posts = postRepository.findByKindAndKeywordLikeOrderBySortDesc(kind, sort, keyword, pageable);
 
         List<PostDto> postL = posts.stream().map(Post::toDto).collect(Collectors.toList());
 

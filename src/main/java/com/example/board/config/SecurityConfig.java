@@ -27,10 +27,10 @@ public class SecurityConfig {
         http.authorizeRequests()
                 .antMatchers("/board/manage/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/postsForm").authenticated()
-                .antMatchers("/users/loginForm", "/users/login", "/").permitAll();
+                .antMatchers("/loginForm", "/users/login", "/").permitAll();
 
         http.formLogin()
-                .loginPage("/users/loginForm")// 로그인폼 등록, 기존 시큐리티의 로그인폼이 아닌 다른 폼을 사용하겠다
+                .loginPage("/loginForm")// 로그인폼 등록, 기존 시큐리티의 로그인폼이 아닌 다른 폼을 사용하겠다
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .loginProcessingUrl("/users/login") // 해당 url로 요청이 들어오면 시큐리티가 대신 로그인 진행을 하도록 위임, 시큐리티 세션 등록이 가능하리라 보임

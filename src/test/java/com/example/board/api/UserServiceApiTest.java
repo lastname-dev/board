@@ -31,8 +31,8 @@ public class UserServiceApiTest extends BaseTest {
     public UserRepository userRepository;
 
     String url = "https://localhost:8080/users";
-    String email = "email@temp.net";
-    String password = "password";
+    static String email = "email@temp.net";
+    static String password = "password";
 
     @BeforeEach
     public void init() {
