@@ -30,7 +30,6 @@ public class PostController {
                             @RequestParam("sort") String sort,
                             @RequestParam("keyword") String keyword) {
 
-        // 약간 하드코딩이라 좀 불안하긴하다
         Kind kind = Kind.valueOf(kindStr.toUpperCase());
 
         List<PostDto> posts = postService.pageList(kind, sort, keyword, pageable);
@@ -40,34 +39,34 @@ public class PostController {
 
 
     @GetMapping("/posts/{postId}")
-    public String read(Model model, @PathVariable Integer postId) {
+    public ResponseEntity read(Model model, @PathVariable Integer postId) {
 
-        model.addAttribute("post", postService.postView(postId));
-        return "postview";
+        PostDto postDto = postService.postView(postId);
+        return ResponseEntity.status(HttpStatus.OK).body(postDto);
     }
 
     @PostMapping("/posts")
-    public String Write(PostDto postdto, Authentication authentication) {
+    public ResponseEntity write(@RequestBody PostDto postdto, Authentication authentication) {
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         postdto.setUser_email(principalDetails.getUserEmail());
         postService.write(postdto);
-        return "redirect:/";
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    @PostMapping("/posts/delete/{postId}")
-    public String delete(@PathVariable Integer postId) {
+    @DeleteMapping("/posts/delete/{postId}")
+    public ResponseEntity delete(@PathVariable Integer postId) {
 
         postService.delete(postId);
 
-        return "redirect:/";
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @PutMapping("/posts/{postId}")
-    public String modify(@PathVariable Integer postId, PostDto postdto, Authentication authentication) {
+    public ResponseEntity modify(@PathVariable Integer postId, PostDto postdto, Authentication authentication) {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         if (principalDetails.getUserEmail() != postdto.getUser_email())
-            return "redirect:/";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
         PostDto postdtotemp = postService.postView(postId);
         postdtotemp.setTitle(postdto.getTitle());
@@ -75,7 +74,7 @@ public class PostController {
         postdtotemp.setKind(postdto.getKind());
 
         postService.modify(postdtotemp);
-        return "redirect:/";
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }
 
