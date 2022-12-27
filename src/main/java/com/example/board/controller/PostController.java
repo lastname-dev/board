@@ -5,13 +5,20 @@ import com.example.board.model.post.Kind;
 import com.example.board.model.post.PostDto;
 import com.example.board.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 public class PostController {
@@ -30,16 +37,18 @@ public class PostController {
     }
 
     @GetMapping("/board/{kind}")
-    public String viewBoard(Model model,
+    public ResponseEntity<List<PostDto>> viewBoard(Model model,
                             @PathVariable("kind") String kindStr,
-                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Kind kind = Kind.valueOf(kindStr.toUpperCase());
+                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                            @RequestParam("sort") String sort,
+                            @RequestParam("keyword") String keyword) {
+
         // 약간 하드코딩이라 좀 불안하긴하다
+        Kind kind = Kind.valueOf(kindStr.toUpperCase());
 
-        model.addAttribute("list", postService.pageList(kind, pageable));
-        model.addAttribute("kind", kind.toString().toLowerCase());
+        List<PostDto> posts = postService.pageList(kind, sort, keyword, pageable);
 
-        return "postlist";
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
 
 
