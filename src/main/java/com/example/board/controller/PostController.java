@@ -1,23 +1,24 @@
 package com.example.board.controller;
 
 import com.example.board.config.auth.PrincipalDetails;
+import com.example.board.config.resolver.UserEmail;
 import com.example.board.model.comment.CommentDto;
 import com.example.board.model.post.Kind;
 import com.example.board.model.post.PostDto;
-import com.example.board.repository.CommentRepository;
 import com.example.board.service.CommentService;
 import com.example.board.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -50,9 +51,14 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public ResponseEntity write(@RequestBody PostDto postdto, Authentication authentication) {
+    public ResponseEntity write(@RequestBody PostDto postdto,
+                                @UserEmail String userEmail,
+                                Authentication authentication) {
+
+        System.out.println("유저이메일은 ~~~" + userEmail);
+
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        postdto.setUser_email(principalDetails.getUserEmail());
+        postdto.setUserEmail(principalDetails.getUsername());
         postService.write(postdto);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
@@ -65,11 +71,14 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
+    @PreAuthorize("#postdto.userEmail == principal.username")
     @PutMapping("/posts/{postId}")
-    public ResponseEntity modify(@PathVariable Integer postId, @RequestBody PostDto postdto, Authentication authentication) {
+    public ResponseEntity modify(@PathVariable Integer postId,
+                                 @RequestBody PostDto postdto,
+                                 Authentication authentication) {
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();;
-        if (!principalDetails.getUserEmail().equals(postdto.getUser_email())) {
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        if (!principalDetails.getUsername().equals(postdto.getUserEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
         PostDto postdtotemp = postService.postView(postId);
@@ -89,36 +98,42 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
     @PostMapping("/posts/{postId}/comment")
-    public ResponseEntity addComment(@PathVariable Integer postId, @RequestBody CommentDto commentDto, Authentication authentication) {
+    public ResponseEntity writeComment(@PathVariable Integer postId,
+                                     @RequestBody CommentDto commentDto,
+                                     Authentication authentication) {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
-        commentDto.setUserEmail(principalDetails.getUserEmail());
+        commentDto.setUserEmail(principalDetails.getUsername());
         commentDto.setPostId(postId);
 
         commentService.addComment(commentDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
-    @PutMapping("/posts/{postid}/comment/{commentid}")
-    public ResponseEntity modifyComment(@PathVariable Integer postId,@PathVariable Integer commentid, @RequestBody CommentDto commentDto,Authentication authentication){
+    @PutMapping("/posts/{postId}/comment/{commentId}")
+    public ResponseEntity modifyComment(@PathVariable Integer postId,
+                                        @PathVariable Integer commentId,
+                                        @RequestBody CommentDto commentDto,
+                                        Authentication authentication){
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();;
 
         //본인이 쓴 댓글이 아니면
-        if (!principalDetails.getUserEmail().equals(commentDto.getUserEmail())) {
+        if (!principalDetails.getUsername().equals(commentDto.getUserEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        CommentDto commentDtoTemp = commentService.commentView(commentid);
+        CommentDto commentDtoTemp = commentService.commentView(commentId);
         commentDtoTemp.setContent(commentDto.getContent());
         commentService.modify(commentDtoTemp);
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
-    @DeleteMapping("/posts/{postid}/comment/{commentid}")
-    public ResponseEntity deleteComment(@PathVariable Integer postId,@PathVariable Integer commentid, Authentication authentication){
-
-        commentService.delete(commentid);
+    @PreAuthorize("#postRepository == principal.username")
+    @DeleteMapping("/posts/{postId}/comment/{commentId}")
+    public ResponseEntity deleteComment(@PathVariable Integer postId,
+                                        @PathVariable Integer commentId){
+        commentService.delete(commentId);
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }

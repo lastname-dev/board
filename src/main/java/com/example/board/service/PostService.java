@@ -1,7 +1,5 @@
 package com.example.board.service;
 
-import com.example.board.model.comment.Comment;
-import com.example.board.model.comment.CommentDto;
 import com.example.board.model.post.Kind;
 import com.example.board.model.post.Post;
 import com.example.board.model.post.PostDto;
@@ -9,9 +7,7 @@ import com.example.board.model.user.User;
 import com.example.board.repository.PostRepository;
 import com.example.board.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +25,7 @@ public class PostService {
     // 글 작성 처리
 
     public void write(PostDto postdto) {
-        User user = userRepository.findByEmail(postdto.getUser_email());
+        User user = userRepository.findByEmail(postdto.getUserEmail());
         Post post = toEntity(postdto, user);
         user.addPost(post);
         postRepository.save(post);
@@ -37,7 +33,7 @@ public class PostService {
 
     public void modify(PostDto postdto) {
 
-        User user = userRepository.findByEmail(postdto.getUser_email());
+        User user = userRepository.findByEmail(postdto.getUserEmail());
         Post post = toEntity(postdto, user);
         post.setWrittenDate(postdto.getWrittenDate());
         postRepository.save(post);
