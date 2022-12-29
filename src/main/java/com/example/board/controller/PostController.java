@@ -1,8 +1,11 @@
 package com.example.board.controller;
 
 import com.example.board.config.auth.PrincipalDetails;
+import com.example.board.model.comment.CommentDto;
 import com.example.board.model.post.Kind;
 import com.example.board.model.post.PostDto;
+import com.example.board.repository.CommentRepository;
+import com.example.board.service.CommentService;
 import com.example.board.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,8 @@ import java.util.List;
 @RestController
 public class PostController {
 
-    private final  PostService postService;
+    private final PostService postService;
+    private final CommentService commentService;
 
     @GetMapping("/board/{kind}")
     public ResponseEntity<List<PostDto>> viewBoard(
@@ -39,7 +43,7 @@ public class PostController {
 
 
     @GetMapping("/posts/{postId}")
-    public ResponseEntity read(Model model, @PathVariable Integer postId) {
+    public ResponseEntity read(@PathVariable Integer postId) {
 
         PostDto postDto = postService.postView(postId);
         return ResponseEntity.status(HttpStatus.OK).body(postDto);
@@ -53,7 +57,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    @RequestMapping(value = "/posts/delete/{postId}", method = {RequestMethod.DELETE,RequestMethod.GET})
+    @RequestMapping(value = "/posts/{postId}", method = {RequestMethod.DELETE})
     public ResponseEntity delete(@PathVariable Integer postId) {
 
         postService.delete(postId);
@@ -62,18 +66,53 @@ public class PostController {
     }
 
     @PutMapping("/posts/{postId}")
-    public ResponseEntity modify(@PathVariable Integer postId, PostDto postdto, Authentication authentication) {
+    public ResponseEntity modify(@PathVariable Integer postId, @RequestBody PostDto postdto, Authentication authentication) {
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        if (principalDetails.getUserEmail() != postdto.getUser_email())
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();;
+        if (!principalDetails.getUserEmail().equals(postdto.getUser_email())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-
+        }
         PostDto postdtotemp = postService.postView(postId);
         postdtotemp.setTitle(postdto.getTitle());
         postdtotemp.setContent(postdto.getContent());
         postdtotemp.setKind(postdto.getKind());
 
         postService.modify(postdtotemp);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @PostMapping("/posts/{postId}/comment")
+    public ResponseEntity addComment(@PathVariable Integer postId, @RequestBody CommentDto commentDto, Authentication authentication) {
+
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+
+        commentDto.setUserEmail(principalDetails.getUserEmail());
+        commentDto.setPostId(postId);
+
+        commentService.addComment(commentDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+    @PutMapping("/posts/{postid}/comment/{commentid}")
+    public ResponseEntity modifyComment(@PathVariable Integer postId,@PathVariable Integer commentid, @RequestBody CommentDto commentDto,Authentication authentication){
+
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();;
+
+        //본인이 쓴 댓글이 아니면
+        if (!principalDetails.getUserEmail().equals(commentDto.getUserEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        CommentDto commentDtoTemp = commentService.commentView(commentid);
+        commentDtoTemp.setContent(commentDto.getContent());
+        commentService.modify(commentDtoTemp);
+
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+    @DeleteMapping("/posts/{postid}/comment/{commentid}")
+    public ResponseEntity deleteComment(@PathVariable Integer postId,@PathVariable Integer commentid, Authentication authentication){
+
+        commentService.delete(commentid);
+
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

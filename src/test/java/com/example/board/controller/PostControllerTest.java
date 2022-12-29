@@ -12,28 +12,31 @@ import com.example.board.model.user.userDto.JoinRequestDto;
 import com.example.board.repository.PostRepository;
 import com.example.board.repository.UserRepository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.web.client.match.MockRestRequestMatchers;
 
 
 import java.util.logging.Logger;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
+@TestMethodOrder(OrderAnnotation.class)
 class PostControllerTest extends BaseTest {
 
 
@@ -60,20 +63,19 @@ class PostControllerTest extends BaseTest {
     @Autowired
     PostRepository postRepository;
 
-//    @BeforeEach
-//    void init(){
-//        JoinRequestDto joinRequestDto = joinProc();
-//    }
-
 
     @Test
     void viewBoard() {
-        //given
 
     }
 
     @Test
-    void read() {
+    void read() throws Exception {
+        write();
+        Integer id = postRepository.findByTitle("title1").getId();
+        mockMvc.perform(get(url+"/"+id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[?(@.title == 'title1')]").exists());
 
     }
 
@@ -81,7 +83,6 @@ class PostControllerTest extends BaseTest {
     @Order(100)
     void write() throws Exception {
         //given
-
         PostDto input = PostDto.builder().
             kind(Kind.NOTICE).
                 title("title1").
@@ -101,21 +102,38 @@ class PostControllerTest extends BaseTest {
 
     @Test
     @Order(200)
-    void deleteTest() throws Exception {
+     void deleteTest() throws Exception {
         write();
 
-        Logger logger = Logger.getLogger("mylogger");
         int id= postRepository.findByTitle("title1").getId();
-        logger.info(""+id);
 
         mockMvc.perform(delete(url+"/"+id));
 
-        assertNull(postRepository.findById(id).get());
+        assertThat(postRepository.findById(id)).isEmpty();
 
     }
 
     @Test
-    void modify() {
+    @Order(150)
+    void modify() throws Exception {
+        write();
+        Post post = postRepository.findByTitle("title1");
+        int id = post.getId();
+        String userEmail = post.getUser().getEmail();
+
+        PostDto input = PostDto.builder().
+                title("title2").
+                content("content2").
+                user_email(userEmail).
+                build();
+
+        mockMvc.perform(put(url+"/"+id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(input)))
+                .andExpect(status().isOk());
+
+        assertThat(postRepository.findById(id).get().getTitle()).isEqualTo("title2");
+
     }
 
     public JoinRequestDto joinProc() {

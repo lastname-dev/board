@@ -1,5 +1,7 @@
 package com.example.board.service;
 
+import com.example.board.model.comment.Comment;
+import com.example.board.model.comment.CommentDto;
 import com.example.board.model.post.Kind;
 import com.example.board.model.post.Post;
 import com.example.board.model.post.PostDto;
@@ -34,6 +36,7 @@ public class PostService {
     }
 
     public void modify(PostDto postdto) {
+
         User user = userRepository.findByEmail(postdto.getUser_email());
         Post post = toEntity(postdto, user);
         post.setWrittenDate(postdto.getWrittenDate());
@@ -75,4 +78,5 @@ public class PostService {
                 .build();
         return post;
     }
+
 }
