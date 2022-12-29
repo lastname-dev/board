@@ -35,10 +35,10 @@ public class Post extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     Kind kind;
-//    Integer likes;
-//    Integer unlikes;
 
-//    Comment comment;
+    Integer likes;
+    Integer unlikes;
+    Long views;
 
     @Builder
     public Post(Integer id, String title, String content, User user, Kind kind, String writtenDate) {
@@ -47,6 +47,10 @@ public class Post extends BaseTimeEntity {
         this.content = content;
         this.user = user;
         this.kind = kind;
+
+        views = 0L;
+        likes = 0;
+        unlikes = 0;
     }
 
     public void addComment(Comment comment) {
@@ -57,7 +61,17 @@ public class Post extends BaseTimeEntity {
         commentList.remove(comment);
     }
 
+    public void viewIncrease(){
+        this.views++;
+    }
+    public void likeIncrease(){
+        this.likes++;
+    }
+    public void unLikesIncrease(){
+        this.unlikes++;
+    }
+
     public PostDto toDto() {
-        return new PostDto(id, title, content, user.getEmail(), kind, getWrittenDate());
+        return new PostDto(id, title, content, user.getEmail(), kind, getWrittenDate(), likes, unlikes, views);
     }
 }

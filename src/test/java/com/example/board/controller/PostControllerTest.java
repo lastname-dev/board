@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@TestMethodOrder(OrderAnnotation.class)
 class PostControllerTest extends BaseTest {
 
 
@@ -63,9 +62,9 @@ class PostControllerTest extends BaseTest {
     @Autowired
     PostRepository postRepository;
 
-
     @Test
     void viewBoard() {
+        //given
 
     }
 
@@ -83,6 +82,7 @@ class PostControllerTest extends BaseTest {
     @Order(100)
     void write() throws Exception {
         //given
+
         PostDto input = PostDto.builder().
             kind(Kind.NOTICE).
                 title("title1").

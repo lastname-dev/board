@@ -81,6 +81,13 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
+    @PutMapping("posts/{postId}/like")
+    public ResponseEntity like(@PathVariable("postId") Integer id,
+                                @RequestParam(value = "value") Boolean value){
+        postService.like(id, value);
+
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
     @PostMapping("/posts/{postId}/comment")
     public ResponseEntity addComment(@PathVariable Integer postId, @RequestBody CommentDto commentDto, Authentication authentication) {
 
