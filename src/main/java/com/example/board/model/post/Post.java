@@ -72,6 +72,6 @@ public class Post extends BaseTimeEntity {
     }
 
     public PostDto toDto() {
-        return new PostDto(id, title, content, user.getEmail(), kind, getWrittenDate(), likes, unlikes, views);
+        return new PostDto(id, title, content, user.getEmail(), kind, getWrittenDate(), likes, unlikes, views,commentList);
     }
 }

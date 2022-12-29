@@ -1,10 +1,13 @@
 package com.example.board.model.post;
 
+import com.example.board.model.comment.Comment;
 import lombok.*;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Getter
@@ -13,7 +16,7 @@ public class PostDto {
 
 
     @Builder
-    public PostDto(Integer id, String title, String content, String user_email, Kind kind, LocalDateTime writtenDate, Integer likes, Integer unlikes, Long views) {
+    public PostDto(Integer id, String title, String content, String user_email, Kind kind, LocalDateTime writtenDate, Integer likes, Integer unlikes, Long views,List<Comment> commentList) {
         this.title = title;
         this.Content = content;
         this.kind = kind;
@@ -23,6 +26,7 @@ public class PostDto {
         this.likes = likes;
         this.unlikes = unlikes;
         this.views = views;
+        this.commentList = commentList;
     }
 
     private Integer id;
@@ -38,4 +42,5 @@ public class PostDto {
     private Integer likes;
     private Integer unlikes;
     private Long views;
+    List<Comment> commentList = new ArrayList<>();
 }
