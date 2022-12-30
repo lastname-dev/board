@@ -1,7 +1,5 @@
 package com.example.board.service;
 
-import com.example.board.model.comment.Comment;
-import com.example.board.model.comment.CommentDto;
 import com.example.board.model.post.Kind;
 import com.example.board.model.post.Post;
 import com.example.board.model.post.PostDto;
@@ -10,9 +8,7 @@ import com.example.board.repository.CommentRepository;
 import com.example.board.repository.PostRepository;
 import com.example.board.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 

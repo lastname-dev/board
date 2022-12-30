@@ -1,6 +1,7 @@
 package com.example.board.config.auth;
 
 import com.example.board.model.user.User;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -30,10 +31,9 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getName();
+        return user.getEmail();
     }
 
-    public String getUserEmail() { return user.getEmail();}
     @Override
     public boolean isAccountNonExpired() {
         return true;

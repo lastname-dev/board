@@ -52,6 +52,7 @@ class PostControllerTest extends BaseTest {
                 .andExpect(status().isOk());
         //회원가입
     }
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -72,7 +73,7 @@ class PostControllerTest extends BaseTest {
     void read() throws Exception {
         write();
         Integer id = postRepository.findByTitle("title1").getId();
-        mockMvc.perform(get(url+"/"+id))
+        mockMvc.perform(get(url + "/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[?(@.title == 'title1')]").exists());
 
@@ -84,14 +85,14 @@ class PostControllerTest extends BaseTest {
         //given
 
         PostDto input = PostDto.builder().
-            kind(Kind.NOTICE).
+                kind(Kind.NOTICE).
                 title("title1").
-        content("content1").build();
+                content("content1").build();
 
 
         mockMvc.perform(post(url)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(input)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isOk());
 
         Post post = postRepository.findByTitle("title1");
@@ -102,12 +103,12 @@ class PostControllerTest extends BaseTest {
 
     @Test
     @Order(200)
-     void deleteTest() throws Exception {
+    void deleteTest() throws Exception {
         write();
 
-        int id= postRepository.findByTitle("title1").getId();
+        int id = postRepository.findByTitle("title1").getId();
 
-        mockMvc.perform(delete(url+"/"+id));
+        mockMvc.perform(delete(url + "/" + id));
 
         assertThat(postRepository.findById(id)).isEmpty();
 
@@ -127,7 +128,7 @@ class PostControllerTest extends BaseTest {
                 userEmail(userEmail).
                 build();
 
-        mockMvc.perform(put(url+"/"+id)
+        mockMvc.perform(put(url + "/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isOk());

@@ -67,7 +67,7 @@ public class PostController {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
-        if(!principalDetails.getUserEmail().equals(postService.postView(postId).getUserEmail())){
+        if(!principalDetails.getUsername().equals(postService.postView(postId).getUserEmail())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
