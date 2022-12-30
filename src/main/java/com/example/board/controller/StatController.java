@@ -16,8 +16,9 @@ public class StatController {
 
 
     private final StatService statService;
+
     @GetMapping("/stats")
-    public ResponseEntity show(Model model){
+    public ResponseEntity show(Model model) {
         StatDto show = statService.show();
 
         return ResponseEntity.status(HttpStatus.OK).body(show);

@@ -16,12 +16,13 @@ public class WebConfig implements WebMvcConfigurer {
     private final UserEmailArgumentResolver userEmailArgumentResolver;
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry){
+    public void addInterceptors(InterceptorRegistry registry) {
         //registry.addInterceptor(new IdentityVerificationWebInterceptor())
-          //      .addPathPatterns("/posts/**");
+        //      .addPathPatterns("/posts/**");
     }
+
     @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers){
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(userEmailArgumentResolver);
     }
 

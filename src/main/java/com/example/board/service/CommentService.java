@@ -12,14 +12,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class CommentService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    public void addComment(CommentDto commentDto){
+
+    public void addComment(CommentDto commentDto) {
 
         User user = userRepository.findByEmail(commentDto.getUserEmail());
         Post post = postRepository.findById(commentDto.getPostId()).get();
@@ -27,7 +31,8 @@ public class CommentService {
         user.addComment(comment);
         post.addComment(comment);
     }
-    public CommentDto commentView(Integer commentId){
+
+    public CommentDto commentView(Integer commentId) {
         Comment comment = commentRepository.findById(commentId).get();
         return comment.toDto();
     }
@@ -36,7 +41,7 @@ public class CommentService {
 
         User user = userRepository.findByEmail(commentDto.getUserEmail());
         Post post = postRepository.findById(commentDto.getPostId()).get();
-        commentRepository.save(toEntity(commentDto,user,post));
+        commentRepository.save(toEntity(commentDto, user, post));
     }
 
 

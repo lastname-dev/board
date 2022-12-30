@@ -21,7 +21,7 @@ import org.springframework.security.web.SecurityFilterChain;
         securedEnabled = true,
         jsr250Enabled = true
 )
-public class SecurityConfig{
+public class SecurityConfig {
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -34,9 +34,8 @@ public class SecurityConfig{
         http.csrf().disable();
 
         http.authorizeRequests()
-                .antMatchers("/board/manage/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/postsForm").authenticated()
-                .antMatchers("/loginForm", "/users/login", "/").permitAll();
+                .antMatchers("/loginForm", "/users/login", "/").permitAll()
+                .anyRequest().authenticated();
 
         http.formLogin()
                 .loginPage("/loginForm")// 로그인폼 등록, 기존 시큐리티의 로그인폼이 아닌 다른 폼을 사용하겠다
