@@ -106,6 +106,7 @@ class PostControllerTest extends BaseTest {
     void deleteTest() throws Exception {
         write();
 
+
         int id = postRepository.findByTitle("title1").getId();
 
         mockMvc.perform(delete(url + "/" + id));

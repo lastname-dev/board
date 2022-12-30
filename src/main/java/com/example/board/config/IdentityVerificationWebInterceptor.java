@@ -30,7 +30,8 @@ public class IdentityVerificationWebInterceptor implements HandlerInterceptor {
 
         return emailData.userEmail.equals(principalDetails.getUsername());
     }
-    private static class EmailData{
+
+    private static class EmailData {
         String userEmail;
     }
 }

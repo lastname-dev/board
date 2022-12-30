@@ -1,15 +1,13 @@
 package com.example.board.controller;
 
-import ch.qos.logback.core.joran.action.ActionUtil;
 import com.example.board.config.auth.PrincipalDetails;
+import com.example.board.config.resolver.UserEmail;
 import com.example.board.model.comment.CommentDto;
 import com.example.board.model.post.Kind;
 import com.example.board.model.post.PostDto;
-import com.example.board.repository.CommentRepository;
 import com.example.board.service.CommentService;
 import com.example.board.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -17,9 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -29,8 +28,6 @@ public class PostController {
     private final PostService postService;
     private final CommentService commentService;
 
-
-    //인터셉터로 처리
     @GetMapping("/board/{kind}")
     public ResponseEntity<List<PostDto>> viewBoard(
                             @PathVariable("kind") String kindStr,
@@ -46,7 +43,6 @@ public class PostController {
     }
 
 
-    //인터셉터로 막기 postId로 kind??
     @GetMapping("/posts/{postId}")
     public ResponseEntity read(@PathVariable Integer postId) {
 
@@ -54,23 +50,21 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(postDto);
     }
 
-    //인터셉터로 막기
     @PostMapping("/posts")
-    public ResponseEntity write(@RequestBody PostDto postdto) {
+    public ResponseEntity write(@RequestBody PostDto postdto,
+                                @UserEmail String userEmail,
+                                Authentication authentication) {
 
+        System.out.println("유저이메일은 ~~~" + userEmail);
+
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        postdto.setUserEmail(principalDetails.getUsername());
         postService.write(postdto);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @RequestMapping(value = "/posts/{postId}", method = {RequestMethod.DELETE})
-    public ResponseEntity delete(@PathVariable Integer postId, Authentication authentication) {
-
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-
-        if(!principalDetails.getUsername().equals(postService.postView(postId).getUserEmail())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
+    public ResponseEntity delete(@PathVariable Integer postId) {
 
         postService.delete(postId);
 
@@ -79,9 +73,8 @@ public class PostController {
 
     @PreAuthorize("#postdto.userEmail==principal.username ")
     @PutMapping("/posts/{postId}")
-    public ResponseEntity modify(@PathVariable Integer postId, @RequestBody PostDto postdto, Authentication authentication) {
-
-
+    public ResponseEntity modify(@PathVariable Integer postId,
+                                 @RequestBody PostDto postdto) {
         PostDto postdtotemp = postService.postView(postId);
         postdtotemp.setTitle(postdto.getTitle());
         postdtotemp.setContent(postdto.getContent());
@@ -93,19 +86,18 @@ public class PostController {
 
     @PutMapping("posts/{postId}/like")
     public ResponseEntity like(@PathVariable("postId") Integer id,
-                                @RequestParam(value = "value") Boolean value){
+                               @RequestParam(value = "value") Boolean value) {
         postService.like(id, value);
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-
     @PostMapping("/posts/{postId}/comment")
-    public ResponseEntity writeComment(@PathVariable Integer postId, @RequestBody CommentDto commentDto, Authentication authentication) {
+    public ResponseEntity writeComment(@PathVariable Integer postId,
+                                       @RequestBody CommentDto commentDto,
+                                       @UserEmail String userEmail) {
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-
-        commentDto.setUserEmail(principalDetails.getUsername());
+        commentDto.setUserEmail(userEmail);
         commentDto.setPostId(postId);
 
         commentService.addComment(commentDto);
@@ -117,12 +109,7 @@ public class PostController {
     @PutMapping("/posts/{postid}/comment/{commentid}")
     public ResponseEntity modifyComment(@PathVariable Integer postId,@PathVariable Integer commentid, @RequestBody CommentDto commentDto,Authentication authentication){
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();;
 
-        //본인이 쓴 댓글이 아니면
-        if (!principalDetails.getUsername().equals(commentDto.getUserEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
         CommentDto commentDtoTemp = commentService.commentView(commentid);
         commentDtoTemp.setContent(commentDto.getContent());
         commentService.modify(commentDtoTemp);
