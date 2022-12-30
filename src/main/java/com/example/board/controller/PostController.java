@@ -101,11 +101,11 @@ public class PostController {
 
 
     @PostMapping("/posts/{postId}/comment")
-    public ResponseEntity addComment(@PathVariable Integer postId, @RequestBody CommentDto commentDto, Authentication authentication) {
+    public ResponseEntity writeComment(@PathVariable Integer postId, @RequestBody CommentDto commentDto, Authentication authentication) {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
-        commentDto.setUserEmail(principalDetails.getUserEmail());
+        commentDto.setUserEmail(principalDetails.getUsername());
         commentDto.setPostId(postId);
 
         commentService.addComment(commentDto);
@@ -120,7 +120,7 @@ public class PostController {
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();;
 
         //본인이 쓴 댓글이 아니면
-        if (!principalDetails.getUserEmail().equals(commentDto.getUserEmail())) {
+        if (!principalDetails.getUsername().equals(commentDto.getUserEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
         CommentDto commentDtoTemp = commentService.commentView(commentid);
@@ -135,7 +135,7 @@ public class PostController {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
-        if(!principalDetails.getUserEmail().equals(commentService.commentView(postId).getUserEmail())){
+        if(!principalDetails.getUsername().equals(commentService.commentView(postId).getUserEmail())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 

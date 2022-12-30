@@ -11,6 +11,7 @@ import java.util.List;
 
 @Data
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDto {
 
