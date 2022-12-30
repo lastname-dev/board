@@ -1,5 +1,6 @@
 package com.example.board.controller;
 
+import ch.qos.logback.core.joran.action.ActionUtil;
 import com.example.board.config.auth.PrincipalDetails;
 import com.example.board.model.comment.CommentDto;
 import com.example.board.model.post.Kind;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,8 @@ public class PostController {
     private final PostService postService;
     private final CommentService commentService;
 
+
+    //인터셉터로 처리
     @GetMapping("/board/{kind}")
     public ResponseEntity<List<PostDto>> viewBoard(
                             @PathVariable("kind") String kindStr,
@@ -42,6 +46,7 @@ public class PostController {
     }
 
 
+    //인터셉터로 막기 postId로 kind??
     @GetMapping("/posts/{postId}")
     public ResponseEntity read(@PathVariable Integer postId) {
 
@@ -49,29 +54,34 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(postDto);
     }
 
+    //인터셉터로 막기
     @PostMapping("/posts")
-    public ResponseEntity write(@RequestBody PostDto postdto, Authentication authentication) {
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        postdto.setUser_email(principalDetails.getUserEmail());
+    public ResponseEntity write(@RequestBody PostDto postdto) {
+
         postService.write(postdto);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @RequestMapping(value = "/posts/{postId}", method = {RequestMethod.DELETE})
-    public ResponseEntity delete(@PathVariable Integer postId) {
+    public ResponseEntity delete(@PathVariable Integer postId, Authentication authentication) {
+
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+
+        if(!principalDetails.getUserEmail().equals(postService.postView(postId).getUserEmail())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
 
         postService.delete(postId);
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
+    @PreAuthorize("#postdto.userEmail==principal.username ")
     @PutMapping("/posts/{postId}")
     public ResponseEntity modify(@PathVariable Integer postId, @RequestBody PostDto postdto, Authentication authentication) {
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();;
-        if (!principalDetails.getUserEmail().equals(postdto.getUser_email())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+
         PostDto postdtotemp = postService.postView(postId);
         postdtotemp.setTitle(postdto.getTitle());
         postdtotemp.setContent(postdto.getContent());
@@ -88,6 +98,8 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
+
+
     @PostMapping("/posts/{postId}/comment")
     public ResponseEntity addComment(@PathVariable Integer postId, @RequestBody CommentDto commentDto, Authentication authentication) {
 
@@ -100,6 +112,8 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
+
+    @PreAuthorize("#commentDto.userEmail==principal.username ")
     @PutMapping("/posts/{postid}/comment/{commentid}")
     public ResponseEntity modifyComment(@PathVariable Integer postId,@PathVariable Integer commentid, @RequestBody CommentDto commentDto,Authentication authentication){
 
@@ -115,8 +129,15 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
+
     @DeleteMapping("/posts/{postid}/comment/{commentid}")
     public ResponseEntity deleteComment(@PathVariable Integer postId,@PathVariable Integer commentid, Authentication authentication){
+
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+
+        if(!principalDetails.getUserEmail().equals(commentService.commentView(postId).getUserEmail())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
 
         commentService.delete(commentid);
 

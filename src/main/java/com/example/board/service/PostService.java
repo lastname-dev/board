@@ -6,6 +6,7 @@ import com.example.board.model.post.Kind;
 import com.example.board.model.post.Post;
 import com.example.board.model.post.PostDto;
 import com.example.board.model.user.User;
+import com.example.board.repository.CommentRepository;
 import com.example.board.repository.PostRepository;
 import com.example.board.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class PostService {
     // 글 작성 처리
 
     public void write(PostDto postdto) {
-        User user = userRepository.findByEmail(postdto.getUser_email());
+        User user = userRepository.findByEmail(postdto.getUserEmail());
         Post post = toEntity(postdto, user);
         user.addPost(post);
         postRepository.save(post);
@@ -37,7 +38,7 @@ public class PostService {
 
     public void modify(PostDto postdto) {
 
-        User user = userRepository.findByEmail(postdto.getUser_email());
+        User user = userRepository.findByEmail(postdto.getUserEmail());
         Post post = toEntity(postdto, user);
         post.setWrittenDate(postdto.getWrittenDate());
         postRepository.save(post);
@@ -61,6 +62,7 @@ public class PostService {
 
         return post.toDto();
     }
+
 
     @Transactional
     public void delete(Integer id) {
@@ -95,5 +97,4 @@ public class PostService {
                 .build();
         return post;
     }
-
 }

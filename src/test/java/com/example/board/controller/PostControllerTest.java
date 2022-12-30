@@ -124,7 +124,7 @@ class PostControllerTest extends BaseTest {
         PostDto input = PostDto.builder().
                 title("title2").
                 content("content2").
-                user_email(userEmail).
+                userEmail(userEmail).
                 build();
 
         mockMvc.perform(put(url+"/"+id)
