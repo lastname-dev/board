@@ -106,13 +106,12 @@ class PostControllerTest extends BaseTest {
     void deleteTest() throws Exception {
         write();
 
-
         int id = postRepository.findByTitle("title1").getId();
 
         mockMvc.perform(delete(url + "/" + id));
 
         assertThat(postRepository.findById(id)).isEmpty();
-
+        assertThat(postRepository.findAll().size()).isEqualTo(0);
     }
 
     @Test
@@ -135,19 +134,6 @@ class PostControllerTest extends BaseTest {
                 .andExpect(status().isOk());
 
         assertThat(postRepository.findById(id).get().getTitle()).isEqualTo("title2");
-
-    }
-
-    public JoinRequestDto joinProc() {
-        JoinRequestDto joinRequestDto = new JoinRequestDto();
-        joinRequestDto.setEmail("aaa@aaa.ccc");
-        joinRequestDto.setPassword("123456");
-        joinRequestDto.setName("박이름");
-        joinRequestDto.setPhone("010-3333-2222");
-        joinRequestDto.setAge(20);
-        joinRequestDto.setGender(Gender.MALE);
-        joinRequestDto.setRole(Role.ROLE_USER);
-
-        return joinRequestDto;
+        assertThat(postRepository.findAll().size()).isEqualTo(1);
     }
 }

@@ -1,5 +1,8 @@
 package com.example.board;
 
+import com.example.board.model.user.Gender;
+import com.example.board.model.user.Role;
+import com.example.board.model.user.userDto.JoinRequestDto;
 import com.example.board.repository.UserRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +25,22 @@ public class BaseTest {
     protected MockMvc mockMvc;
     @Autowired
     protected WebApplicationContext context;
+
+    protected static final String email = "email@temp.com";
+    protected static final String password = "1234";
+
+    public JoinRequestDto joinProc() {
+        JoinRequestDto joinRequestDto = new JoinRequestDto();
+        joinRequestDto.setEmail(email);
+        joinRequestDto.setPassword(password);
+        joinRequestDto.setName("박이름");
+        joinRequestDto.setPhone("010-3333-2222");
+        joinRequestDto.setAge(20);
+        joinRequestDto.setGender(Gender.MALE);
+        joinRequestDto.setRole(Role.ROLE_USER);
+
+        return joinRequestDto;
+    }
+
 
 }

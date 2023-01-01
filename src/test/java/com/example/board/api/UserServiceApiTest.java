@@ -31,8 +31,6 @@ public class UserServiceApiTest extends BaseTest {
     public UserRepository userRepository;
 
     String url = "https://localhost:8080/users";
-    static String email = "email@temp.net";
-    static String password = "password";
 
     @BeforeEach
     public void init() {
@@ -114,31 +112,5 @@ public class UserServiceApiTest extends BaseTest {
 
         assertThat(user).isEqualTo(null);
         assertThat(userList.size()).isEqualTo(0);
-    }
-
-    public JoinRequestDto joinProc() {
-        JoinRequestDto joinRequestDto = new JoinRequestDto();
-        joinRequestDto.setEmail(email);
-        joinRequestDto.setPassword(password);
-        joinRequestDto.setName("박이름");
-        joinRequestDto.setPhone("010-3333-2222");
-        joinRequestDto.setAge(20);
-        joinRequestDto.setGender(Gender.MALE);
-        joinRequestDto.setRole(Role.ROLE_USER);
-
-        return joinRequestDto;
-    }
-
-    public void loginProc() throws Exception {
-        mockMvc.perform(post(url)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(joinProc())))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(formLogin()
-                        .user(email)
-                        .password(password))
-                .andExpect(status().isOk());
-        // 회원가입 + 로그인
     }
 }

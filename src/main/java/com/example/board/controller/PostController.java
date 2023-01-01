@@ -28,10 +28,10 @@ public class PostController {
 
     @GetMapping("/board/{kind}")
     public ResponseEntity<List<PostDto>> viewBoard(
-                            @PathVariable("kind") String kindStr,
-                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 3) Pageable pageable,
-                            @RequestParam(value = "sort", defaultValue = "recent") String sort,
-                            @RequestParam(value = "keyword",defaultValue = "") String keyword) {
+            @PathVariable("kind") String kindStr,
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 3) Pageable pageable,
+            @RequestParam(value = "sort", defaultValue = "recent") String sort,
+            @RequestParam(value = "keyword", defaultValue = "") String keyword) {
 
         Kind kind = Kind.valueOf(kindStr.toUpperCase());
 
@@ -48,7 +48,6 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(postDto);
     }
 
-    //인터셉터로 막기
     @PostMapping("/posts")
     public ResponseEntity write(@RequestBody PostDto postdto,
                                 @UserEmail String userEmail) {
@@ -56,6 +55,7 @@ public class PostController {
         postService.write(postdto);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
+
     @RequestMapping(value = "/posts/{postId}", method = {RequestMethod.DELETE})
     public ResponseEntity delete(@PathVariable Integer postId) {
 
@@ -85,6 +85,7 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
+
     @PostMapping("/posts/{postId}/comment")
     public ResponseEntity writeComment(@PathVariable Integer postId,
                                        @RequestBody CommentDto commentDto,
@@ -114,11 +115,11 @@ public class PostController {
     @DeleteMapping("/posts/{postId}/comment/{commentId}")
     public ResponseEntity deleteComment(@PathVariable Integer postId,
                                         @PathVariable Integer commentId,
-                                        Authentication authentication){
+                                        Authentication authentication) {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
-        if(!principalDetails.getUsername().equals(commentService.commentView(postId).getUserEmail())){
+        if (!principalDetails.getUsername().equals(commentService.commentView(postId).getUserEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
