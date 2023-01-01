@@ -15,35 +15,40 @@ import com.example.board.repository.CommentRepository;
 import com.example.board.repository.PostRepository;
 import com.example.board.repository.UserRepository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.web.client.match.MockRestRequestMatchers;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
+
 class PostControllerTest extends BaseTest {
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    String url = "https://localhost:8080/posts";
+
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    PostRepository postRepository;
+    @Autowired
+    CommentRepository commentRepository;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -58,18 +63,6 @@ class PostControllerTest extends BaseTest {
                 .andExpect(status().isOk());
         //회원가입
     }
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    String url = "https://localhost:8080/posts";
-
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    PostRepository postRepository;
-    @Autowired
-    CommentRepository commentRepository;
 
     @Test
     void viewBoard() {
@@ -162,6 +155,7 @@ class PostControllerTest extends BaseTest {
                 .andExpect(status().isOk());
 
 
+        System.out.println("zdsssaddsaz");
         Comment comment = commentRepository.findById(1).get();
 
         assertThat(comment.getContent()).isEqualTo("content1");

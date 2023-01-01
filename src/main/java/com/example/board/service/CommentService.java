@@ -28,7 +28,9 @@ public class CommentService {
     public void addComment(CommentDto commentDto) {
 
         User user = userRepository.findByEmail(commentDto.getUserEmail());
+        System.out.println(commentDto.getPostId());
         Post post = postRepository.findById(commentDto.getPostId()).get();
+        System.out.println("13231213231213213213");
         Comment comment = toEntity(commentDto, user, post);
         user.addComment(comment);
         post.addComment(comment);
