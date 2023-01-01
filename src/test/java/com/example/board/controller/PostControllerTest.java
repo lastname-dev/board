@@ -2,6 +2,8 @@ package com.example.board.controller;
 
 import com.example.board.BaseTest;
 import com.example.board.config.auth.PrincipalDetails;
+import com.example.board.model.comment.Comment;
+import com.example.board.model.comment.CommentDto;
 import com.example.board.model.post.Kind;
 import com.example.board.model.post.Post;
 import com.example.board.model.post.PostDto;
@@ -9,35 +11,44 @@ import com.example.board.model.user.Gender;
 import com.example.board.model.user.Role;
 import com.example.board.model.user.User;
 import com.example.board.model.user.userDto.JoinRequestDto;
+import com.example.board.repository.CommentRepository;
 import com.example.board.repository.PostRepository;
 import com.example.board.repository.UserRepository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.web.client.match.MockRestRequestMatchers;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 
-import java.util.logging.Logger;
+import javax.transaction.Transactional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
+
 class PostControllerTest extends BaseTest {
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    String url = "https://localhost:8080/posts";
+
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    PostRepository postRepository;
+    @Autowired
+    CommentRepository commentRepository;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -53,19 +64,8 @@ class PostControllerTest extends BaseTest {
         //회원가입
     }
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    String url = "https://localhost:8080/posts";
-
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    PostRepository postRepository;
-
     @Test
     void viewBoard() {
-        //given
 
     }
 
@@ -102,9 +102,10 @@ class PostControllerTest extends BaseTest {
     }
 
     @Test
-    @Order(200)
+//    @Order(200)
     void deleteTest() throws Exception {
         write();
+
 
         int id = postRepository.findByTitle("title1").getId();
 
@@ -115,7 +116,7 @@ class PostControllerTest extends BaseTest {
     }
 
     @Test
-    @Order(150)
+//    @Order(150)
     void modify() throws Exception {
         write();
         Post post = postRepository.findByTitle("title1");

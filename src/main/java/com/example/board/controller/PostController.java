@@ -55,7 +55,6 @@ public class PostController {
         postService.write(postdto);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
-
     @RequestMapping(value = "/posts/{postId}", method = {RequestMethod.DELETE})
     public ResponseEntity delete(@PathVariable Integer postId) {
 
@@ -74,7 +73,7 @@ public class PostController {
         postdtotemp.setContent(postdto.getContent());
         postdtotemp.setKind(postdto.getKind());
 
-        postService.modify(postdtotemp);
+        postService.modify(postdto,postId);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
@@ -115,11 +114,10 @@ public class PostController {
     @DeleteMapping("/posts/{postId}/comment/{commentId}")
     public ResponseEntity deleteComment(@PathVariable Integer postId,
                                         @PathVariable Integer commentId,
-                                        Authentication authentication) {
+                                        @UserEmail String userEmail) {
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
-        if (!principalDetails.getUsername().equals(commentService.commentView(postId).getUserEmail())) {
+        if(!userEmail.equals(commentService.commentView(postId).getUserEmail())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 

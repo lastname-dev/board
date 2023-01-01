@@ -37,11 +37,17 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public void modify(PostDto postdto) {
+    public void modify(PostDto postdto,int postId) {
 
-        User user = userRepository.findByEmail(postdto.getUserEmail());
-        Post post = toEntity(postdto, user);
-        post.setWrittenDate(postdto.getWrittenDate());
+        PostDto postdtotemp = postView(postId);
+        postdtotemp.setTitle(postdto.getTitle());
+        postdtotemp.setContent(postdto.getContent());
+        postdtotemp.setKind(postdto.getKind());
+
+        User user = userRepository.findByEmail(postdtotemp.getUserEmail());
+        Post post = toEntity(postdtotemp, user);
+
+        post.setWrittenDate(postdtotemp.getWrittenDate());
         postRepository.save(post);
     }
 
