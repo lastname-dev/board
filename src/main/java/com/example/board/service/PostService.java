@@ -43,7 +43,14 @@ public class PostService {
     //게시글 리스트 보기
 
     public List<PostDto> pageList(Kind kind, String sort, String keyword, Pageable pageable) {
-        Page<Post> posts = postRepository.findCustom(kind, keyword, pageable);
+        Page<Post> posts = postRepository.findBoardOrderByRecent(kind, keyword, pageable);
+
+        if (sort =="likes") {
+            posts = postRepository.findBoardOrderByLike(kind, keyword, pageable);
+        } else if (sort =="views") {
+            posts = postRepository.findBoardOrderByView(kind, keyword, pageable);
+        }
+
 
         List<PostDto> postL = posts.stream().map(Post::toDto).collect(Collectors.toList());
 

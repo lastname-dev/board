@@ -30,7 +30,7 @@ public class PostController {
     public ResponseEntity<List<PostDto>> viewBoard(
                             @PathVariable("kind") String kindStr,
                             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 3) Pageable pageable,
-                            @RequestParam(value = "sort", defaultValue = "writtenDate") String sort,
+                            @RequestParam(value = "sort", defaultValue = "recent") String sort,
                             @RequestParam(value = "keyword",defaultValue = "") String keyword) {
 
         Kind kind = Kind.valueOf(kindStr.toUpperCase());
@@ -48,6 +48,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(postDto);
     }
 
+    //인터셉터로 막기
     @PostMapping("/posts")
     public ResponseEntity write(@RequestBody PostDto postdto,
                                 @UserEmail String userEmail) {
@@ -56,14 +57,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
     @RequestMapping(value = "/posts/{postId}", method = {RequestMethod.DELETE})
-    public ResponseEntity delete(@PathVariable Integer postId, Authentication authentication) {
-
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-
-        if(!principalDetails.getUsername().equals(postService.postView(postId).getUserEmail())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
+    public ResponseEntity delete(@PathVariable Integer postId) {
 
         postService.delete(postId);
 
@@ -104,10 +98,12 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
+    @PreAuthorize("#commentDto.userEmail==principal.username")
     @PutMapping("/posts/{postId}/comment/{commentId}")
     public ResponseEntity modifyComment(@PathVariable Integer postId,
                                         @PathVariable Integer commentId,
                                         @RequestBody CommentDto commentDto) {
+
         CommentDto commentDtoTemp = commentService.commentView(commentId);
         commentDtoTemp.setContent(commentDto.getContent());
         commentService.modify(commentDtoTemp);
@@ -127,7 +123,6 @@ public class PostController {
         }
 
         commentService.delete(commentId);
-
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }
