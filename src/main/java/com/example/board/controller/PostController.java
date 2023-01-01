@@ -15,10 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -31,7 +29,7 @@ public class PostController {
     @GetMapping("/board/{kind}")
     public ResponseEntity<List<PostDto>> viewBoard(
                             @PathVariable("kind") String kindStr,
-                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 3) Pageable pageable,
                             @RequestParam(value = "sort", defaultValue = "recent") String sort,
                             @RequestParam(value = "keyword",defaultValue = "") String keyword) {
 
@@ -52,14 +50,11 @@ public class PostController {
 
     @PostMapping("/posts")
     public ResponseEntity write(@RequestBody PostDto postdto,
-                                @UserEmail String userEmail,
-                                Authentication authentication) {
-
+                                @UserEmail String userEmail) {
         postdto.setUserEmail(userEmail);
         postService.write(postdto);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
-
     @RequestMapping(value = "/posts/{postId}", method = {RequestMethod.DELETE})
     public ResponseEntity delete(@PathVariable Integer postId) {
 
@@ -68,10 +63,15 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    @PreAuthorize("#postdto.userEmail==principal.username ")
+    @PreAuthorize("#postdto.userEmail==principal.username")
     @PutMapping("/posts/{postId}")
     public ResponseEntity modify(@PathVariable Integer postId,
                                  @RequestBody PostDto postdto) {
+
+        PostDto postdtotemp = postService.postView(postId);
+        postdtotemp.setTitle(postdto.getTitle());
+        postdtotemp.setContent(postdto.getContent());
+        postdtotemp.setKind(postdto.getKind());
 
         postService.modify(postdto,postId);
         return ResponseEntity.status(HttpStatus.OK).body(null);
@@ -84,7 +84,6 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
-
     @PostMapping("/posts/{postId}/comment")
     public ResponseEntity writeComment(@PathVariable Integer postId,
                                        @RequestBody CommentDto commentDto,
@@ -92,34 +91,32 @@ public class PostController {
 
         commentDto.setUserEmail(userEmail);
         commentDto.setPostId(postId);
-        commentService.addComment(commentDto);
 
+        commentService.addComment(commentDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @PreAuthorize("#commentDto.userEmail==principal.username ")
-    @PutMapping("/posts/{postid}/comment/{commentid}")
-    public ResponseEntity modifyComment(@PathVariable Integer postid,@PathVariable Integer commentid, @RequestBody CommentDto commentDto){
+    @PutMapping("/posts/{postId}/comment/{commentId}")
+    public ResponseEntity modifyComment(@PathVariable Integer postId,@PathVariable Integer commentId, @RequestBody CommentDto commentDto){
 
-
-        CommentDto commentDtoTemp = commentService.commentView(commentid);
+        CommentDto commentDtoTemp = commentService.commentView(commentId);
         commentDtoTemp.setContent(commentDto.getContent());
         commentService.modify(commentDtoTemp);
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    @DeleteMapping("/posts/{postid}/comment/{commentid}")
-    public ResponseEntity deleteComment(@PathVariable Integer postid,@PathVariable Integer commentid, @UserEmail String userEmail, Authentication authentication){
+    @DeleteMapping("/posts/{postId}/comment/{commentId}")
+    public ResponseEntity deleteComment(@PathVariable Integer postId,@PathVariable Integer commentId, @UserEmail String userEmail, Authentication authentication){
 
 
-        if(!userEmail.equals(commentService.commentView(postid).getUserEmail())){
+        if(!userEmail.equals(commentService.commentView(postId).getUserEmail())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        commentService.delete(commentid);
-
+        commentService.delete(commentId);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

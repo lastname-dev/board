@@ -46,21 +46,6 @@ public class SecurityConfig {
                 .logoutUrl("/users/logout") // 로그아웃 처리 URL, default: /logout, 원칙적으로 post 방식만 지원
                 .logoutSuccessUrl("/"); // 로그아웃 성공 후 이동페이지
 
-        /*
-        일단 위와 같이 구성하면 로그인, 로그아웃에 대한 서비스를 구현할 필요가 없음
-        즉, 현재 UserController에 있는 로그인 로그아웃 메소드는 필요가 없음
-        또한 시큐리티 내부에 있는 자체 세션을 가지고 인증을 진행함
-
-        다만, 현재 발견된 문제는 다음과 같음
-        1. .formLogin() 다음에 .loginPage를 넣어서 우리가 만든 프론트를 사용할 경우 PricipalDetailService에 값이 들어가지 않음
-            따라서 User user가 null이 되고 로그인이 되지 않음
-        2. 위에서 진행하는 로그인, 로그아웃은 원칙적으로 post를 지원함
-        3. 스프링 시큐리티가 login, logout 로직을 가로채가기 때문에 우리가 컨트롤러단에서 설정한 세션값은 적용되지않음, 애초에 메소드가 실행도 안됨
-        -> 끝나면 GET으로 실행할순 있음
-        * */
-
-
-
         return http.build();
     }
 

@@ -49,14 +49,18 @@ public class PostService {
     //게시글 리스트 보기
 
     public List<PostDto> pageList(Kind kind, String sort, String keyword, Pageable pageable) {
-        Page<Post> posts = postRepository.findBoardOrderByRecent(kind, keyword, pageable);
-
-        if (sort =="likes") {
-            posts = postRepository.findBoardOrderByLike(kind, keyword, pageable);
-        } else if (sort =="views") {
-            posts = postRepository.findBoardOrderByView(kind, keyword, pageable);
+        Page<Post> posts;
+        switch (sort){
+            case "likes":
+                posts = postRepository.findBoardOrderByLike(kind, keyword, pageable);
+                break;
+            case "views":
+                posts = postRepository.findBoardOrderByView(kind, keyword, pageable);
+                break;
+            default:
+                posts = postRepository.findBoardOrderByRecent(kind, keyword, pageable);
+                break;
         }
-
 
         List<PostDto> postL = posts.stream().map(Post::toDto).collect(Collectors.toList());
 
@@ -82,12 +86,12 @@ public class PostService {
     }
 
     @Transactional
-    public void like(Integer id, Boolean value) {
+    public void like(Integer id, Boolean isLike) {
 
         Post post = postRepository.findById(id).get();
 
         // like
-        if (value) {
+        if (isLike) {
             post.likeIncrease();
         }
         // unlike

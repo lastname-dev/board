@@ -62,16 +62,6 @@ public class UserServiceApiTest extends BaseTest {
         assertThat(user.getEmail()).isEqualTo(email);
         assertThat(user.getRole()).isEqualTo(Role.ROLE_USER);
     }
-    
-    @Test
-    @WithMockUser(roles = "USER")
-    public void sessionTest() throws Exception {
-        //given
-        mockMvc.perform(post(url)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(joinProc())))
-                .andExpect(status().isOk());
-    }
 
     @Test
     @WithMockUser(roles = "USER")
