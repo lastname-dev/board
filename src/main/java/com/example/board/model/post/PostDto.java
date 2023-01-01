@@ -11,12 +11,13 @@ import java.util.List;
 
 @Data
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDto {
 
 
     @Builder
-    public PostDto(Integer id, String title, String content, String userEmail, Kind kind, LocalDateTime writtenDate, Integer likes, Integer unlikes, Long views, List<Comment> commentList) {
+    public PostDto(Integer id, String title, String content, String userEmail, Kind kind, LocalDateTime writtenDate, Integer likes, Integer unlikes, Long views,List<Comment> commentList) {
         this.title = title;
         this.Content = content;
         this.kind = kind;

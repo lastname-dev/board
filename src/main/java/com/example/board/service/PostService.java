@@ -4,6 +4,7 @@ import com.example.board.model.post.Kind;
 import com.example.board.model.post.Post;
 import com.example.board.model.post.PostDto;
 import com.example.board.model.user.User;
+import com.example.board.repository.CommentRepository;
 import com.example.board.repository.PostRepository;
 import com.example.board.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,7 @@ public class PostService {
 
         return post.toDto();
     }
+
 
     @Transactional
     public void delete(Integer id) {

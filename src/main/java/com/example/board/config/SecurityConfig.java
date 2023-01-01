@@ -3,13 +3,10 @@ package com.example.board.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -61,6 +58,9 @@ public class SecurityConfig {
         3. 스프링 시큐리티가 login, logout 로직을 가로채가기 때문에 우리가 컨트롤러단에서 설정한 세션값은 적용되지않음, 애초에 메소드가 실행도 안됨
         -> 끝나면 GET으로 실행할순 있음
         * */
+
+        http.authorizeRequests()
+                .antMatchers("/test").authenticated();
 
         return http.build();
     }
