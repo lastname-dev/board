@@ -59,8 +59,7 @@ public class SecurityConfig {
         -> 끝나면 GET으로 실행할순 있음
         * */
 
-        http.authorizeRequests()
-                .antMatchers("/test").authenticated();
+
 
         return http.build();
     }

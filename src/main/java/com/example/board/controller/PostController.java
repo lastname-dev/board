@@ -55,10 +55,7 @@ public class PostController {
                                 @UserEmail String userEmail,
                                 Authentication authentication) {
 
-        System.out.println("유저이메일은 ~~~" + userEmail);
-
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        postdto.setUserEmail(principalDetails.getUsername());
+        postdto.setUserEmail(userEmail);
         postService.write(postdto);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
@@ -75,12 +72,8 @@ public class PostController {
     @PutMapping("/posts/{postId}")
     public ResponseEntity modify(@PathVariable Integer postId,
                                  @RequestBody PostDto postdto) {
-        PostDto postdtotemp = postService.postView(postId);
-        postdtotemp.setTitle(postdto.getTitle());
-        postdtotemp.setContent(postdto.getContent());
-        postdtotemp.setKind(postdto.getKind());
 
-        postService.modify(postdtotemp);
+        postService.modify(postdto,postId);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
@@ -99,15 +92,15 @@ public class PostController {
 
         commentDto.setUserEmail(userEmail);
         commentDto.setPostId(postId);
-
         commentService.addComment(commentDto);
+
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @PreAuthorize("#commentDto.userEmail==principal.username ")
     @PutMapping("/posts/{postid}/comment/{commentid}")
-    public ResponseEntity modifyComment(@PathVariable Integer postId,@PathVariable Integer commentid, @RequestBody CommentDto commentDto,Authentication authentication){
+    public ResponseEntity modifyComment(@PathVariable Integer postid,@PathVariable Integer commentid, @RequestBody CommentDto commentDto){
 
 
         CommentDto commentDtoTemp = commentService.commentView(commentid);
@@ -118,11 +111,10 @@ public class PostController {
     }
 
     @DeleteMapping("/posts/{postid}/comment/{commentid}")
-    public ResponseEntity deleteComment(@PathVariable Integer postId,@PathVariable Integer commentid, Authentication authentication){
+    public ResponseEntity deleteComment(@PathVariable Integer postid,@PathVariable Integer commentid, @UserEmail String userEmail, Authentication authentication){
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
-        if(!principalDetails.getUsername().equals(commentService.commentView(postId).getUserEmail())){
+        if(!userEmail.equals(commentService.commentView(postid).getUserEmail())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 

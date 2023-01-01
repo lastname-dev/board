@@ -23,6 +23,8 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
+
+    @Transactional
     public void addComment(CommentDto commentDto) {
 
         User user = userRepository.findByEmail(commentDto.getUserEmail());
@@ -30,6 +32,8 @@ public class CommentService {
         Comment comment = toEntity(commentDto, user, post);
         user.addComment(comment);
         post.addComment(comment);
+        commentRepository.save(comment);
+
     }
 
     public CommentDto commentView(Integer commentId) {
@@ -38,7 +42,6 @@ public class CommentService {
     }
 
     public void modify(CommentDto commentDto) {
-
         User user = userRepository.findByEmail(commentDto.getUserEmail());
         Post post = postRepository.findById(commentDto.getPostId()).get();
         commentRepository.save(toEntity(commentDto, user, post));
@@ -47,6 +50,7 @@ public class CommentService {
 
     private Comment toEntity(CommentDto commentDto, User user, Post post) {
         Comment comment = Comment.builder()
+                .id(commentDto.getId())
                 .post(post)
                 .user(user)
                 .content(commentDto.getContent())
@@ -56,6 +60,7 @@ public class CommentService {
 
     public void delete(Integer id) {
         Comment comment = commentRepository.findById(id).get();
+        System.out.println(("zzzz"+comment.getContent()));
         User user = comment.getUser();
         Post post = comment.getPost();
         user.deleteComment(comment);
