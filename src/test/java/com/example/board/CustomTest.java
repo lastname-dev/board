@@ -2,12 +2,12 @@ package com.example.board;
 
 import com.example.board.config.auth.PrincipalDetails;
 import com.example.board.model.post.Kind;
-import com.example.board.model.post.Post;
 import com.example.board.model.post.PostDto;
 import com.example.board.model.user.User;
 import com.example.board.repository.PostRepository;
 import com.example.board.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +17,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -43,7 +37,8 @@ public class CustomTest extends BaseTest {
                 .andExpect(status().isOk());
         //회원가입
 
-        postRepository.deleteAll();
+        System.out.println("size = " + userRepository.findAll().size());
+        System.out.println("id = " + userRepository.findAll().get(0).getId());
     }
 
     @Autowired
@@ -51,6 +46,14 @@ public class CustomTest extends BaseTest {
 
     @Autowired
     PostRepository postRepository;
+
+    @AfterEach
+    void tearDown(){
+        jdbcTemplate.update("set FOREIGN_KEY_CHECKS = 0");
+        jdbcTemplate.update("truncate table users");
+        jdbcTemplate.update("truncate table posts");
+        jdbcTemplate.update("set FOREIGN_KEY_CHECKS = 1");
+    }
 
     @Test
     @WithMockUser
