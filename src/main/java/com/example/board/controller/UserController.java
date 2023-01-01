@@ -17,9 +17,8 @@ public class UserController {
 
     private final UserService userService;
 
-
     @PostMapping
-    public ResponseEntity join(@RequestBody JoinRequestDto joinRequestDto) throws IllegalAccessException {
+    public ResponseEntity join(@RequestBody JoinRequestDto joinRequestDto) {
 
         try {
             userService.create(joinRequestDto);
@@ -28,16 +27,6 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
-//
-//    @GetMapping("/login")
-//    public String login() {
-//        return "redirect:/";
-//    }
-//
-//    @GetMapping("/logout")
-//    public String logout() {
-//        return "redirect:/";
-//    }
 
     @PutMapping("/{id}")
     public ResponseEntity update(@RequestBody UpdateRequestDto updateRequestDto,
