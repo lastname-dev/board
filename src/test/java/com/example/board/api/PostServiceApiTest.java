@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -60,12 +61,13 @@ public class PostServiceApiTest extends BaseTest {
                 .apply(springSecurity())
                 .build();
 
-        postIndex=0;
+        postIndex = 0;
     }
 
     @Test
-    public void searchTest() throws Exception {
-
+    @WithMockUser
+    public void defaultSearchTest() throws Exception {
+        //given
         for (int i = 0; i < 5; i++) {
             PostDto postDto = PostDto.builder()
                     .title("post_" + i)
@@ -78,13 +80,79 @@ public class PostServiceApiTest extends BaseTest {
         }
 
         //when
-        MvcResult result = mockMvc.perform(get("https://localhost:8080/board/normal?page=0&size=3&sort=&keyword=")).andReturn();
+        MvcResult result = mockMvc.perform(get("https://localhost:8080/board/normal?page=&size=&sort=&keyword=")).andReturn();
 
         //then
         String r_str = result.getResponse().getContentAsString();
-        System.out.println(r_str); // 일단 페이징을 통해 글을 최신순으로 출력하는건 성공, sort 관련해서 해야함
+        String[] strings = r_str.split("},");
 
+        assertThat(strings.length).isEqualTo(3); // default size = 3
+        assertThat(strings[0]).contains("post_4"); // 가장 마지막에 쓴 글, default sort = recent
+        assertThat(r_str).doesNotContain("post_1"); // 페이징에 맞지 않는 글
     }
+
+    @Test
+    @WithMockUser
+    public void pagingSearchTest() throws Exception {
+        //given
+        int page = 2;
+        int size = 5;
+
+        for (int i = 0; i < 30; i++) {
+            PostDto postDto = PostDto.builder()
+                    .title("post_" + i)
+                    .kind(Kind.NORMAL)
+                    .build();
+
+            mockMvc.perform(post(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(new ObjectMapper().writeValueAsString(postDto)));
+        }
+
+        //when
+        MvcResult result = mockMvc.perform(get("https://localhost:8080/board/normal?page=" + page + "&size=" + size + "&sort=&keyword=")).andReturn();
+
+        //then
+        String r_str = result.getResponse().getContentAsString();
+        String[] strings = r_str.split("},");
+
+        //2페이지 내용 -> post_19 ~ post_15
+
+        assertThat(strings.length).isEqualTo(5); // size = 5
+        assertThat(strings[0]).contains("post_19");
+        assertThat(r_str).doesNotContain("post_20", "post_14"); // 페이징에 맞지 않는 글
+    }
+
+    @Test
+    @WithMockUser
+    public void sortByLikeSearchTest() throws Exception {
+        //given
+        for (int i = 0; i < 30; i++) {
+            PostDto postDto = PostDto.builder()
+                    .title("post_" + i)
+                    .kind(Kind.NORMAL)
+                    .build();
+
+            mockMvc.perform(post(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(new ObjectMapper().writeValueAsString(postDto)));
+        }
+
+        //when
+        MvcResult result = mockMvc.perform(get("https://localhost:8080/board/normal?page=&size=&sort=like&keyword=")).andReturn();
+
+        //then
+        String r_str = result.getResponse().getContentAsString();
+        String[] strings = r_str.split("},");
+
+        //2페이지 내용 -> post_19 ~ post_15
+
+        assertThat(strings.length).isEqualTo(5); // size = 5
+        assertThat(strings[0]).contains("post_19");
+        assertThat(r_str).doesNotContain("post_20", "post_14"); // 페이징에 맞지 않는 글
+    }
+
+
 
     @Test
     public void likeTest() throws Exception {
@@ -102,6 +170,7 @@ public class PostServiceApiTest extends BaseTest {
         assertThat(post.getLikes()).isEqualTo(1);
         assertThat(post.getUnlikes()).isEqualTo(2);
     }
+
     @Test
     public void viewTest() throws Exception {
         //given
@@ -131,7 +200,8 @@ public class PostServiceApiTest extends BaseTest {
 
         return joinRequestDto;
     }
-    public Integer postProc() throws Exception{
+
+    public Integer postProc() throws Exception {
         // 새로운 글 쓰기 + 글 등록 + 해당 글 id 반환
         PostDto postDto = PostDto.builder()
                 .title("post_" + postIndex)
@@ -142,7 +212,7 @@ public class PostServiceApiTest extends BaseTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(postDto)));
 
-        Integer id  = postRepository.findByTitle("post_" + postIndex).getId();
+        Integer id = postRepository.findByTitle("post_" + postIndex).getId();
 
         postIndex++;
 

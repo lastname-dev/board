@@ -29,7 +29,7 @@ public class PostController {
     @GetMapping("/board/{kind}")
     public ResponseEntity<List<PostDto>> viewBoard(
                             @PathVariable("kind") String kindStr,
-                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 3) Pageable pageable,
                             @RequestParam(value = "sort", defaultValue = "writtenDate") String sort,
                             @RequestParam(value = "keyword",defaultValue = "") String keyword) {
 
@@ -73,9 +73,7 @@ public class PostController {
     @PreAuthorize("#postdto.userEmail==principal.username")
     @PutMapping("/posts/{postId}")
     public ResponseEntity modify(@PathVariable Integer postId,
-                                 @RequestBody PostDto postdto,
-                                 Authentication authentication) {
-
+                                 @RequestBody PostDto postdto) {
 
         PostDto postdtotemp = postService.postView(postId);
         postdtotemp.setTitle(postdto.getTitle());
