@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 작성</title>
+</head>
+<style>
+    .layout{
+        width: 1000px;
+        margin : 0 auto;
+    }
+</style>
+<body>
+<div class="layout">
+    <form th:action="@{'/posts/' + ${post.id}}" th:method="put">
+        <select name="Kind">
+            <option value="NORMAL">NORMAL</option>
+            <option value="NOTICE">NOTICE</option>
+            <option value="MANAGE">MANAGE</option>
+        </select>
+        <input name="title" type="text" th:value="${post.title}">
+        <textarea name="content" th:text="${post.content}"></textarea>
+        <button type = "submit">수정</button>
+    </form>
+
+</div>
+</body>
+</html>

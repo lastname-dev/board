@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${kind}"></title>
+</head>
+<body>
+<div class="layout">
+    <table>
+        <thead>
+        <tr>
+            <th>분류</th>
+            <th>갯수</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="여자"></td>
+            <td th:text="${stat.FemaleCount}"></td>
+        </tr>
+        <tr>
+            <td th:text="남자"></td>
+        <td th:text="${stat.MaleCount}"></td>
+        </tr>
+        <tr th:each="age : ${stat.Agecount}">
+            <td th:text="연령별"></td>
+            <td th:text="${age}"></td>
+        </tr>
+        <tr th:each="time : ${stat.timeCount}">
+            <td th:text="시간별"></td>
+            <td th:text="${time}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

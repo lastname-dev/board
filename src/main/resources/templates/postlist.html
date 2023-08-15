@@ -19,9 +19,14 @@
                     <td>
                         <a th:text="${post.title}" th:href="@{'/posts/' + ${post.id}}">zzz</a>
                     </td>
-                    <td th:text="${post.user_id}"></td>
+                    <td th:text="${post.user_email}"></td>
                     <td th:text="${post.writtenDate}"></td>
                 </tr>
+                <a th:href="@{'/board/' + ${kind} + '?page=0&&size=3'}">1</a>
+                <a th:href="@{'/board/' + ${kind} + '?page=1&&size=3'}">2</a>
+                <a th:href="@{'/board/' + ${kind} + '?page=2&&size=3'}">3</a>
+                <a th:href="@{'/board/' + ${kind} + '?page=3&&size=3'}">4</a>
+
             </tbody>
         </table>
     </div>

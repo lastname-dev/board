@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+</head>
+<style>
+    .layout{
+        width: 1000px;
+        margin : 0 auto;
+    }
+</style>
+<body>
+<div class="layout">
+    <form action="/users" method="post">
+        <select name="Role">
+            <option value="ROLE_USER">USER</option>
+            <option value="ROLE_ADMIN">ADMIN</option>
+        </select>
+        <select name="Gender">
+            <option value="MALE">MALE</option>
+            <option value="FEMALE">FEMALE</option>
+        </select>
+        <a>
+            email : <input name="email" type="text" >
+            password : <input name="password" type="text">
+            name : <input name="name" type="text">
+            phone : <input name="phone" type="text">
+            age : <input name="age" type="text">
+        </a>
+
+        <button type = "submit">제출</button>
+    </form>
+</div>
+</body>
+</html>
