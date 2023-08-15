@@ -223,19 +223,6 @@ public class PostServiceApiTest extends BaseTest {
         assertThat(post.getViews()).isEqualTo(repeatIndex);
     }
 
-    public JoinRequestDto joinProc() {
-        JoinRequestDto joinRequestDto = new JoinRequestDto();
-        joinRequestDto.setEmail("email");
-        joinRequestDto.setPassword("password");
-        joinRequestDto.setName("박이름");
-        joinRequestDto.setPhone("010-3333-2222");
-        joinRequestDto.setAge(20);
-        joinRequestDto.setGender(Gender.MALE);
-        joinRequestDto.setRole(Role.ROLE_USER);
-
-        return joinRequestDto;
-    }
-
     public Integer postProc() throws Exception {
         // 새로운 글 쓰기 + 글 등록 + 해당 글 id 반환
         PostDto postDto = PostDto.builder()

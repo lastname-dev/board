@@ -28,10 +28,10 @@ public class PostController {
 
     @GetMapping("/board/{kind}")
     public ResponseEntity<List<PostDto>> viewBoard(
-                            @PathVariable("kind") String kindStr,
-                            @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 3) Pageable pageable,
-                            @RequestParam(value = "sort", defaultValue = "recent") String sort,
-                            @RequestParam(value = "keyword",defaultValue = "") String keyword) {
+            @PathVariable("kind") String kindStr,
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 3) Pageable pageable,
+            @RequestParam(value = "sort", defaultValue = "recent") String sort,
+            @RequestParam(value = "keyword", defaultValue = "") String keyword) {
 
         Kind kind = Kind.valueOf(kindStr.toUpperCase());
 
@@ -84,6 +84,7 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
+
     @PostMapping("/posts/{postId}/comment")
     public ResponseEntity writeComment(@PathVariable Integer postId,
                                        @RequestBody CommentDto commentDto,
@@ -97,9 +98,11 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    @PreAuthorize("#commentDto.userEmail==principal.username ")
+    @PreAuthorize("#commentDto.userEmail==principal.username")
     @PutMapping("/posts/{postId}/comment/{commentId}")
-    public ResponseEntity modifyComment(@PathVariable Integer postId,@PathVariable Integer commentId, @RequestBody CommentDto commentDto){
+    public ResponseEntity modifyComment(@PathVariable Integer postId,
+                                        @PathVariable Integer commentId,
+                                        @RequestBody CommentDto commentDto) {
 
         CommentDto commentDtoTemp = commentService.commentView(commentId);
         commentDtoTemp.setContent(commentDto.getContent());
@@ -109,7 +112,9 @@ public class PostController {
     }
 
     @DeleteMapping("/posts/{postId}/comment/{commentId}")
-    public ResponseEntity deleteComment(@PathVariable Integer postId,@PathVariable Integer commentId, @UserEmail String userEmail, Authentication authentication){
+    public ResponseEntity deleteComment(@PathVariable Integer postId,
+                                        @PathVariable Integer commentId,
+                                        @UserEmail String userEmail) {
 
 
         if(!userEmail.equals(commentService.commentView(postId).getUserEmail())){

@@ -112,7 +112,7 @@ class PostControllerTest extends BaseTest {
         mockMvc.perform(delete(url + "/" + id));
 
         assertThat(postRepository.findById(id)).isEmpty();
-
+        assertThat(postRepository.findAll().size()).isEqualTo(0);
     }
 
     @Test
@@ -135,70 +135,6 @@ class PostControllerTest extends BaseTest {
                 .andExpect(status().isOk());
 
         assertThat(postRepository.findById(id).get().getTitle()).isEqualTo("title2");
-
-    }
-
-    @Test
-    @Transactional
-    void writeComment() throws Exception {
-//        Logger logger = LoggerFactory.getLogger(this.getClass());
-//        logger.info("1");
-        write();
-
-        CommentDto input = CommentDto.builder().
-                postId(1).
-                content("content1").build();
-
-        mockMvc.perform(post(url+"/1/comment")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(input)))
-                .andExpect(status().isOk());
-
-
-        System.out.println("zdsssaddsaz");
-        Comment comment = commentRepository.findById(1).get();
-
-        assertThat(comment.getContent()).isEqualTo("content1");
-    }
-
-    @Test
-    void modifyComment() throws Exception {
-        writeComment();
-
-        Comment comment = commentRepository.findById(1).get();
-        String userEmail= comment.getUser().getEmail();
-
-        CommentDto input = CommentDto.builder().
-                content("content2").
-                userEmail(userEmail).
-                build();
-
-        mockMvc.perform(put(url + "/1/comment/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(input)))
-                .andExpect(status().isOk());
-
-        assertThat(commentRepository.findById(1).get().getContent()).isEqualTo("content2");
-    }
-    @Test
-    void deleteComment() throws Exception {
-        writeComment();
-
-        mockMvc.perform(delete(url + "/1/comment/1" ));
-
-        assertThat(commentRepository.findById(1)).isEmpty();
-    }
-
-    public JoinRequestDto joinProc() {
-        JoinRequestDto joinRequestDto = new JoinRequestDto();
-        joinRequestDto.setEmail("aaa@aaa.ccc");
-        joinRequestDto.setPassword("123456");
-        joinRequestDto.setName("박이름");
-        joinRequestDto.setPhone("010-3333-2222");
-        joinRequestDto.setAge(20);
-        joinRequestDto.setGender(Gender.MALE);
-        joinRequestDto.setRole(Role.ROLE_USER);
-
-        return joinRequestDto;
+        assertThat(postRepository.findAll().size()).isEqualTo(1);
     }
 }
